@@ -1,0 +1,19 @@
+{
+  "name": "graph_app",
+  "version": "1.0.0",
+  "description": "Graphing app",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "keywords": [
+    "graph",
+    "app"
+  ],
+  "author": "tpan496",
+  "license": "ISC",
+  "dependencies": {
+    "angular": "^1.6.8",
+    "express": "^4.16.2",
+    "jquery": "^3.2.1"
+  }
+}
