@@ -9,10 +9,11 @@ var currentY = 0;
 var mouseX = 0;
 var mouseY = 0;
 var currentMatrix = [1, 0, 0, 1, 0, 0];
+var oldMatrix = [1, 0, 0, 1, 0, 0];
+var currentCenterMatrix = [1, 0, 0, 1, 0, 0];
 var id = 0;
 var dragging = false;
-var lastX = 0;
-var lastY = 0;
+var prevDiffValue = 0;
 
 $(document).ready(function () {
     svg = $('svg')[0];
@@ -56,6 +57,9 @@ var drawNode = function (x, y) {
     node.setAttribute('onmouseover', 'hoverElement(evt)');
     node.setAttribute('onmouseout', 'outElement(evt)');
     node.setAttribute('radius', 20);
+    node.setAttribute('origin',[x,y]);
+    node.setAttribute('diff', 0);
+    
     id += 1;
     return node;
 };
@@ -111,14 +115,20 @@ var selectScaler = function (e) {
         return;
     }
     dragging = true;
-    logger.html(e.clientX);
     var target = e.target;
     selectedScaler = target;
     currentX = e.clientX;
     currentY = e.clientY;
     currentMatrix = e.target.getAttribute("transform").slice(7, -1).split(' ');
     for (var i = 0; i < currentMatrix.length; i++) {
-        currentMatrix[i] = parseFloat(currentMatrix[i]);
+        var par = parseFloat(currentMatrix[i]);
+        currentMatrix[i] = par;
+        oldMatrix[i] = par;
+    }
+    currentCenterMatrix = selectedElement.children[1].children[1].getAttribute('transform').slice(7, -1).split(' ');
+    for (var i = 0; i < currentCenterMatrix.length; i++) {
+        var par = parseFloat(currentCenterMatrix[i]);
+        currentCenterMatrix[i] = par;
     }
     svg.removeAttribute("onmousemove");
     svg.removeAttribute("onmouseup");
@@ -129,6 +139,7 @@ var selectScaler = function (e) {
 
 var moveScaler = function (e) {
     e.preventDefault();
+    logger.html(e.clientX);
     var dx = e.clientX - currentX;
     var dy = e.clientY - currentY;
     currentMatrix[4] += dx;
@@ -182,10 +193,9 @@ var deselectElement = function (evt) {
     evt.preventDefault();
     svg.removeAttribute("onmousemove");
     svg.removeAttribute("onmouseup");
-};
-
-var randomRange = function (min, max) {
-    return Math.random() * (max - min) + min;
+    oldMatrix = currentMatrix;
+    selectedElement.setAttribute('diff', prevDiffValue);
+    console.log('deselected');
 };
 
 var hoverElement = function (e) {
@@ -209,4 +219,44 @@ var scale = function (selectedElement, dx, dy) {
         return;
     }
     var radius = selectedElement.getAttribute('radius');
+    var origin = selectedElement.getAttribute('origin');
+    var newPosition = [currentMatrix[4], currentMatrix[5]];
+    var position = [oldMatrix[4], oldMatrix[5]];
+    var diff = dist(newPosition, position);
+
+    var mutator = selectedElement.children[1];
+
+    // change linker position
+    var linker = mutator.children[1];
+    var linkerMatrix = linker.getAttribute("transform").slice(7, -1).split(' ');
+    for (var i = 0; i < currentMatrix.length; i++) {
+        linkerMatrix[i] = parseFloat(currentMatrix[i]);
+    }
+    linkerMatrix[4] = currentCenterMatrix[4] + (currentMatrix[4] - oldMatrix[4])/2;
+    linkerMatrix[5] = currentCenterMatrix[5] + (currentMatrix[5] - oldMatrix[5])/2;
+    newMatrix = "matrix(" + linkerMatrix.join(' ') + ")";
+    linker.setAttribute('transform', newMatrix);
+
+    // change scaler position
+    var scaler = mutator.children[0];
+
+    // change circle scale and position
+    var circle = selectedElement.children[0];
+    var circleMatrix = circle.getAttribute("transform").slice(7, -1).split(' ');
+    for (var i = 0; i < currentMatrix.length; i++) {
+        circleMatrix[i] = parseFloat(circleMatrix[i]);
+    }
+    var prevDiff = parseInt(selectedElement.getAttribute('diff'));
+    var scale = currentMatrix[0];
+    console.log(diff);
+    var newRadius = radius*scale + diff/(Math.sqrt(2)*2)+prevDiff;
+    var rate = newRadius / (radius*scale);
+    prevDiffValue = diff/(Math.sqrt(2)*2) + prevDiff;
+
+    circleMatrix[0] = rate;
+    circleMatrix[3] = rate;
+    circleMatrix[4] = currentCenterMatrix[4] + (currentMatrix[4] - oldMatrix[4])/2;
+    circleMatrix[5] = currentCenterMatrix[5] + (currentMatrix[5] - oldMatrix[5])/2;
+    newMatrix = "matrix(" + circleMatrix.join(' ') + ")";
+    circle.setAttribute('transform', newMatrix);
 };

@@ -7,6 +7,9 @@ var drawCircle = function (x, y, radius, fill, stroke, strokeWidth) {
     circle.setAttributeNS(null, 'fill', fill);
     circle.setAttributeNS(null, 'stroke', stroke);
     circle.setAttributeNS(null, 'stroke-width', strokeWidth);
+    circle.setAttribute('transform-origin', 'center');
+    circle.setAttribute('transform', 'matrix(1 0 0 1 0 0)');
+    circle.setAttribute('vector-effect', 'non-scaling-stroke');
     return circle;
 };
 
