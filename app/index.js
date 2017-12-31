@@ -13,7 +13,7 @@ var oldMatrix = [1, 0, 0, 1, 0, 0];
 var currentCenterMatrix = [1, 0, 0, 1, 0, 0];
 var id = 0;
 var dragging = false;
-var prevDiffValue = 0;
+var prevDiffValue = 0.0;
 
 $(document).ready(function () {
     svg = $('svg')[0];
@@ -193,9 +193,13 @@ var deselectElement = function (evt) {
     evt.preventDefault();
     svg.removeAttribute("onmousemove");
     svg.removeAttribute("onmouseup");
-    oldMatrix = currentMatrix;
-    selectedElement.setAttribute('diff', prevDiffValue);
-    console.log('deselected');
+    if(selectedScaler != 0){
+        oldMatrix = currentMatrix;
+        selectedElement.setAttribute('diff', parseInt(prevDiffValue));
+        prevDiffValue = 0.0;
+        selectedScaler = 0;
+    }
+    console.log(selectedElement.getAttribute('diff'));
 };
 
 var hoverElement = function (e) {
@@ -248,7 +252,6 @@ var scale = function (selectedElement, dx, dy) {
     }
     var prevDiff = parseInt(selectedElement.getAttribute('diff'));
     var scale = currentMatrix[0];
-    console.log(diff);
     var newRadius = radius*scale + diff/(Math.sqrt(2)*2)+prevDiff;
     var rate = newRadius / (radius*scale);
     prevDiffValue = diff/(Math.sqrt(2)*2) + prevDiff;
