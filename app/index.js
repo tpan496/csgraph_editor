@@ -1,4 +1,3 @@
-var svg;
 var logger;
 var svgns = "http://www.w3.org/2000/svg"
 var selectedElement = 0;
@@ -14,10 +13,16 @@ var id = 0;
 var dragging = false;
 var linkerMouseDown = false;
 
+// ui infos
+var radiusInfo;
+var idInfo;
+
 $(document).ready(function () {
     svg = $('svg')[0];
     logger = $('#logger');
     var spawnCircleButton = $('#button-circle');
+    radiusInfo = $('label#radius');
+    idInfo = $('label#id');
     spawnCircleButton.click(function () {
         var rx = randomRange(0, 20);
         var ry = randomRange(0, 20);
@@ -29,6 +34,8 @@ $(document).ready(function () {
             turnOffSelectedElementScaler();
         }
         selectedElement = node;
+        idInfo.html(node.getAttribute('id'));
+        radiusInfo.html(node.children[0].getAttribute('radius'));
     });
     $('#paper').click(function () {
         if (selectedElement != 0 && !mouseOverNode) {
@@ -38,7 +45,7 @@ $(document).ready(function () {
 });
 
 var turnOffSelectedElementScaler = function () {
-    if (selectedElement !=0 && isNode(selectedElement)) {
+    if (selectedElement != 0 && isNode(selectedElement)) {
         var scaler = selectedElement.children[1];
         scaler.setAttribute("visibility", "hidden");
         selectedElement = 0;
@@ -62,10 +69,17 @@ var drawNode = function (x, y) {
     node.setAttribute('position-y', y);
     node.setAttribute('origin-x', x);
     node.setAttribute('origin-y', y);
-    node.setAttribute('id', id);
+    var recycledId = getReusableId();
+    if (recycledId >= 0) {
+        node.setAttribute('id', recycledId);
+        addVertex(recycledId);
+    } else {
+        node.setAttribute('id', id);
+        addVertex(id);
+        id += 1;
+    }
+    console.log(node.getAttribute('id'));
 
-    addVertex(id);
-    id += 1;
     return node;
 };
 
@@ -254,6 +268,9 @@ var selectElement = function (e) {
         turnOffSelectedElementScaler();
     }
     selectedElement = e.target.parentElement;
+    idInfo.html(selectedElement.getAttribute('id'));
+    radiusInfo.html(selectedElement.children[0].getAttribute('radius'));
+
     var scaler = selectedElement.children[1];
     if (scaler.getAttribute("visibility") === "hidden") {
         scaler.setAttribute("visibility", "visible");
@@ -567,15 +584,15 @@ var scale = function (dx, dy) {
         lineE.setAttribute('transform', matrixToString(eMatrix));
         updateXY(lineE, 0, dy / 2);
     }
+
+    radiusInfo.html('radius: '+circle.getAttribute('radius'));
 };
 
-$('html').keyup(function(e){
-    console.log(e.keyCode);
-    if(e.keyCode == 46 || e.keyCode == 8) {
-        console.log('sss');
-        if(selectedElement!=0){
-            console.log(selectedElement);
+$('html').keyup(function (e) {
+    if (e.keyCode == 46 || e.keyCode == 8) {
+        if (selectedElement != 0) {
             svg.removeChild(selectedElement);
+            deleteVertex(selectedElement.getAttribute('id'));
         }
     }
 });
