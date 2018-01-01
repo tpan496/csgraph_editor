@@ -15,9 +15,9 @@ svg{
 
 #content{
     background-color: transparent;
-    background-image: linear-gradient(0deg, transparent 24%, rgba(255, 255, 255, .05) 25%, rgba(255, 255, 255, .05) 26%, transparent 27%, transparent 74%, rgba(255, 255, 255, .05) 75%, rgba(255, 255, 255, .05) 76%, transparent 77%, transparent), linear-gradient(90deg, transparent 24%, rgba(255, 255, 255, .05) 25%, rgba(255, 255, 255, .05) 26%, transparent 27%, transparent 74%, rgba(255, 255, 255, .05) 75%, rgba(255, 255, 255, .05) 76%, transparent 77%, transparent);
+    background-image: linear-gradient(to right, rgb(112, 112, 112) 1px, transparent 1px), linear-gradient(to bottom, rgb(112, 112, 112) 1px, transparent 1px);
     height:100%;
-    background-size:50px 50px;
+    background-size:20px 20px;
 }
 
 #info{
@@ -46,14 +46,26 @@ button {
 }
 
 #paper{
-    background: linear-gradient(#666666, #555555);
+    background: linear-gradient(#d6d6d6, #e4e4e4);
     width: 100%;
     height: 100vh;
     float: left;
 }
 
-.scale-node{
+.scale-node#se{
     cursor: se-resize;
+}
+
+.scale-node#ne{
+    cursor: ne-resize;
+}
+
+.scale-node#sw{
+    cursor: sw-resize;
+}
+
+.scale-node#nw{
+    cursor: nw-resize;
 }
 
 #logger{
@@ -62,4 +74,8 @@ button {
     left:50%;
     color: red;
     background: white;
+}
+
+.linker{
+    cursor: default;
 }
