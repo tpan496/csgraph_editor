@@ -65,3 +65,25 @@ var drawDashedLine = function (x1,y1,x2,y2,array,w,color) {
     line.setAttribute('origin-y', (y1+y2)/2);
     return line;
 };
+
+var drawText = function (x,y){
+    var text = document.createElementNS(svgns, 'text');
+    text.setAttribute('x', x);
+    text.setAttribute('y', y+5);
+    text.setAttribute('transform-origin', 'center');
+    text.setAttribute('text-anchor', 'middle');
+    text.setAttribute('font-family', 'Arial');
+    text.setAttribute('transform', 'matrix(1 0 0 1 0 0)');
+    text.setAttribute('vector-effect', 'non-scaling-stroke');
+    text.setAttribute('fill', 'black');
+    text.setAttribute('stroke-width', '0.5px');
+    text.setAttribute('pointer-events', 'none');
+    text.setAttribute('position-x', x);
+    text.setAttribute('position-y', y+5);
+    text.setAttribute('origin-x', x);
+    text.setAttribute('origin-y', y+5);
+    text.setAttribute('class', 'text');
+    text.setAttribute('font-size', 15);
+    text.textContent = 'text';
+    return text;
+};

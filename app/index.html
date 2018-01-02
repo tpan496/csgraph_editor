@@ -11,6 +11,7 @@
     <script src="shape.js"></script>
     <script src="math.js"></script>
     <script src="graph.js"></script>
+    <script src="info.js"></script>
     <script src="index.js"></script>
 </head>
 <body>
@@ -25,8 +26,16 @@
         </div>
     </div>
     <div id="info">
+        <div class="info" id="element" style="text-align: center">none</div>
         <div class="info">id: <label id="id">?</div>
-        <div class="info">radius: <label id="radius">></label> </div>
+        <div class="info">radius: 
+            <label id="radius"></label>
+            <input class="clickedit" type="text" /> 
+        </div>
+        <div class="info">text: <label id="text"></label><input class="clickedit" type="text" /> </div>
+        <div class="info">text-size: <label id="text-size"></label><input class="clickedit" type="text" /> </div>
+        <div class="info">from: <label id="from"></label></div>
+        <div class="info">to: <label id="to"></label></div>
     </div>
     <span id="logger">
         sssss

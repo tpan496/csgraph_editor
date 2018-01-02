@@ -12,10 +12,16 @@ var currentMatrix = [1, 0, 0, 1, 0, 0];
 var id = 0;
 var dragging = false;
 var linkerMouseDown = false;
+var editing = false;
 
 // ui infos
+var elementInfo;
 var radiusInfo;
 var idInfo;
+var fromInfo;
+var toInfo;
+var textInfo;
+var textSizeInfo;
 
 $(document).ready(function () {
     svg = $('svg')[0];
@@ -23,6 +29,12 @@ $(document).ready(function () {
     var spawnCircleButton = $('#button-circle');
     radiusInfo = $('label#radius');
     idInfo = $('label#id');
+    elementInfo = $('.info#element');
+    fromInfo = $('label#from');
+    toInfo = $('label#to');
+    textInfo = $('label#text');
+    textSizeInfo = $('label#text-size');
+    displayBoard();
     spawnCircleButton.click(function () {
         var rx = randomRange(0, 20);
         var ry = randomRange(0, 20);
@@ -34,21 +46,42 @@ $(document).ready(function () {
             turnOffSelectedElementScaler();
         }
         selectedElement = node;
-        idInfo.html(node.getAttribute('id'));
-        radiusInfo.html(node.children[0].getAttribute('radius'));
+        selectedElement.children[1].setAttribute('fill', 'rgb(175,175,175)');
+        displayInfo(node);
     });
     $('#paper').click(function () {
         if (selectedElement != 0 && !mouseOverNode) {
             turnOffSelectedElementScaler();
         }
     });
+
+    $('.clickedit').focusout(endEdit).keyup(function (e) {
+        if ((e.which && e.which == 13) || (e.keyCode && e.keyCode == 13)) {
+            endEdit(e);
+            return false;
+        } else {
+            return true;
+        }
+    }).prev().click(function () {
+        console.log('sss');
+        $(this).hide();
+        $(this).next().show().focus();
+        editing = true;
+    });
 });
 
 var turnOffSelectedElementScaler = function () {
-    if (selectedElement != 0 && isNode(selectedElement)) {
-        var scaler = selectedElement.children[1];
-        scaler.setAttribute("visibility", "hidden");
+    if (selectedElement != 0 && (isNode(selectedElement) || isEdge(selectedElement))) {
+        var scaler = selectedElement.children[2];
+        if (scaler) {
+            scaler.setAttribute("visibility", "hidden");
+        }
+        var text = selectedElement.children[1];
+        if (text) {
+            text.setAttribute('fill', 'black');
+        }
         selectedElement = 0;
+        displayBoard();
     }
 };
 
@@ -56,7 +89,9 @@ var drawNode = function (x, y) {
     var node = document.createElementNS(svgns, 'g');
     var circle = drawCircle(x, y, 20, 'white', 'black', 1.5);
     var mutator = drawMutator(x, y, 20);
+    var text = drawText(x, y);
     node.appendChild(circle);
+    node.appendChild(text);
     node.appendChild(mutator);
     node.setAttribute('transform', 'matrix(1 0 0 1 0 0)');
     node.setAttribute('onmousedown', 'selectElement(evt)');
@@ -69,6 +104,7 @@ var drawNode = function (x, y) {
     node.setAttribute('position-y', y);
     node.setAttribute('origin-x', x);
     node.setAttribute('origin-y', y);
+
     var recycledId = getReusableId();
     if (recycledId >= 0) {
         node.setAttribute('id', recycledId);
@@ -94,7 +130,7 @@ var drawMutator = function (x, y, radius) {
 };
 
 var drawLinker = function (x, y) {
-    var linker = drawCircle(x, y, 4, 'rgb(0,255,0)', 'black', 0.5);
+    var linker = drawCircle(x, y, 6, 'rgb(0,255,0)', 'black', 0.5);
     linker.setAttribute('class', 'linker');
     linker.setAttribute('onmousedown', 'selectLinker(evt)');
     return linker;
@@ -181,6 +217,10 @@ var deselectLinker = function (e) {
         linkPointer.setAttribute('v2', v2);
         linkPointer.setAttribute('stroke', 'black');
         linkPointer.setAttribute('stroke-width', 1.5);
+        linkPointer.setAttribute('class', 'edge');
+        linkPointer.setAttribute('onclick', 'selectEdge(evt)');
+        linkPointer.setAttribute('onmouseover', 'hoverElement(evt)');
+        linkPointer.setAttribute('onmouseout', 'outElement(evt)');
         svg.insertBefore(linkPointer, svg.firstChild);
         addEdge(v1, v2, linkPointer);
     }
@@ -190,6 +230,16 @@ var deselectLinker = function (e) {
     svg.removeAttribute('onmousedown');
     svg.removeAttribute("onmousemove");
 
+};
+
+var selectEdge = function (e) {
+    e.preventDefault();
+    if (e.target.getAttribute('class') != 'edge') {
+        return;
+    }
+    turnOffSelectedElementScaler();
+    selectedElement = e.target;
+    displayInfo(selectedElement);
 };
 
 var selectScaler = function (e) {
@@ -268,10 +318,10 @@ var selectElement = function (e) {
         turnOffSelectedElementScaler();
     }
     selectedElement = e.target.parentElement;
-    idInfo.html(selectedElement.getAttribute('id'));
-    radiusInfo.html(selectedElement.children[0].getAttribute('radius'));
+    displayInfo(selectedElement);
+    selectedElement.children[1].setAttribute('fill', 'rgb(175,175,175)');
 
-    var scaler = selectedElement.children[1];
+    var scaler = selectedElement.children[2];
     if (scaler.getAttribute("visibility") === "hidden") {
         scaler.setAttribute("visibility", "visible");
     }
@@ -318,6 +368,21 @@ var deselectElement = function (evt) {
     svg.removeAttribute("onmousemove");
     svg.removeAttribute("onmouseup");
     selectedScaler = 0;
+
+    var id = selectedElement.getAttribute('id');
+    var edges = getEdges(id);
+    var l = edges.length;
+    for (i = 0; i < l; i++) {
+        var edge = edges[i];
+        var v1 = edge.getAttribute('v1');
+        if (id == v1) {
+            edge.setAttribute('x1', selectedElement.getAttribute('position-x'));
+            edge.setAttribute('y1', selectedElement.getAttribute('position-y'));
+        } else {
+            edge.setAttribute('x2', selectedElement.getAttribute('position-x'));
+            edge.setAttribute('y2', selectedElement.getAttribute('position-y'));
+        }
+    }
 };
 
 var hoverElement = function (e) {
@@ -338,6 +403,14 @@ var isNode = function (e) {
     }
 };
 
+var isEdge = function (e) {
+    if (e.getAttribute('class') == 'edge') {
+        return true;
+    } else {
+        return false;
+    }
+};
+
 var scale = function (dx, dy) {
     if (!isNode(selectedElement)) {
         return;
@@ -345,7 +418,7 @@ var scale = function (dx, dy) {
     var radius = selectedElement.getAttribute('radius');
     var diff = Math.sqrt(dx * dx + dy * dy);
 
-    var mutator = selectedElement.children[1];
+    var mutator = selectedElement.children[2];
 
     // change linker position
     var linker = mutator.children[1];
@@ -358,6 +431,19 @@ var scale = function (dx, dy) {
 
     // change circle scale and position
     var circle = selectedElement.children[0];
+    // change circle and node position as well
+    updateXY(circle, dx / 2, dy / 2);
+    updateXY(selectedElement, dx / 2, dy / 2);
+
+    // change text position
+    var text = selectedElement.children[1];
+    var textMatrix = getMatrix(text);
+    textMatrix[4] = getAbsoluteX(text) + dx / 2;
+    textMatrix[5] = getAbsoluteY(text) + dy / 2;
+    newMatrix = matrixToString(textMatrix);
+    text.setAttribute('transform', newMatrix);
+    updateXY(text, dx / 2, dy / 2);
+
     var circleMatrix = getMatrix(circle);
 
     // change scaler position
@@ -385,8 +471,6 @@ var scale = function (dx, dy) {
         newMatrix = matrixToString(circleMatrix);
         circle.setAttribute('transform', newMatrix);
         updateRadius(circle, -dx / 2);
-        updateXY(circle, dx / 2, dy / 2);
-        updateXY(selectedElement, dx / 2, dy / 2);
 
         var swMatrix = getMatrix(scalerSW);
         swMatrix[4] = getAbsoluteX(scalerSW) + dx;
@@ -436,9 +520,7 @@ var scale = function (dx, dy) {
         circleMatrix[5] = getAbsoluteY(circle) + dy / 2;
         newMatrix = matrixToString(circleMatrix);
         circle.setAttribute('transform', newMatrix);
-        updateXY(circle, dx / 2, dy / 2);
         updateRadius(circle, dx / 2);
-        updateXY(selectedElement, dx / 2, dy / 2);
 
         var nwMatrix = getMatrix(scalerNW);
         nwMatrix[5] = getAbsoluteY(scalerNW) + dy;
@@ -488,9 +570,7 @@ var scale = function (dx, dy) {
         circleMatrix[5] = getAbsoluteY(circle) + dy / 2;
         newMatrix = matrixToString(circleMatrix);
         circle.setAttribute('transform', newMatrix);
-        updateXY(circle, dx / 2, dy / 2);
         updateRadius(circle, dx / 2);
-        updateXY(selectedElement, dx / 2, dy / 2);
 
         var swMatrix = getMatrix(scalerSW);
         swMatrix[5] = getAbsoluteY(scalerSW) + dy;
@@ -540,9 +620,7 @@ var scale = function (dx, dy) {
         circleMatrix[5] = getAbsoluteY(circle) + dy / 2;
         newMatrix = matrixToString(circleMatrix);
         circle.setAttribute('transform', newMatrix);
-        updateXY(circle, dx / 2, dy / 2);
         updateRadius(circle, -dx / 2);
-        updateXY(selectedElement, dx / 2, dy / 2);
 
         var nwMatrix = getMatrix(scalerNW);
         nwMatrix[4] = getAbsoluteX(scalerNW) + dx;
@@ -585,14 +663,28 @@ var scale = function (dx, dy) {
         updateXY(lineE, 0, dy / 2);
     }
 
-    radiusInfo.html('radius: '+circle.getAttribute('radius'));
+    radiusInfo.html('radius: ' + circle.getAttribute('radius'));
 };
 
+// deletion
 $('html').keyup(function (e) {
-    if (e.keyCode == 46 || e.keyCode == 8) {
-        if (selectedElement != 0) {
-            svg.removeChild(selectedElement);
-            deleteVertex(selectedElement.getAttribute('id'));
+    if (!editing) {
+        if (e.keyCode == 46 || e.keyCode == 8) {
+            if (selectedElement != 0) {
+                svg.removeChild(selectedElement);
+                deleteVertex(selectedElement.getAttribute('id'));
+                selectedElement = 0;
+            }
         }
     }
 });
+
+function endEdit(e) {
+    var input = $(e.target),
+        label = input && input.prev();
+
+    label.text(input.val() === '' ? defaultText : input.val());
+    input.hide();
+    label.show();
+    editing = false;
+}
