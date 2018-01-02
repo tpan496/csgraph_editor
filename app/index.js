@@ -63,9 +63,9 @@ $(document).ready(function () {
             return true;
         }
     }).prev().click(function () {
-        console.log('sss');
         $(this).hide();
         $(this).next().show().focus();
+
         editing = true;
     });
 });
@@ -89,7 +89,20 @@ var drawNode = function (x, y) {
     var node = document.createElementNS(svgns, 'g');
     var circle = drawCircle(x, y, 20, 'white', 'black', 1.5);
     var mutator = drawMutator(x, y, 20);
-    var text = drawText(x, y);
+
+    var text;
+    var recycledId = getReusableId();
+    if (recycledId >= 0) {
+        node.setAttribute('id', recycledId);
+        addVertex(recycledId, node);
+        text = drawText(x, y, recycledId);
+    } else {
+        node.setAttribute('id', id);
+        addVertex(id, node);
+        text = drawText(x, y, id);
+        id += 1;
+    }
+
     node.appendChild(circle);
     node.appendChild(text);
     node.appendChild(mutator);
@@ -104,17 +117,6 @@ var drawNode = function (x, y) {
     node.setAttribute('position-y', y);
     node.setAttribute('origin-x', x);
     node.setAttribute('origin-y', y);
-
-    var recycledId = getReusableId();
-    if (recycledId >= 0) {
-        node.setAttribute('id', recycledId);
-        addVertex(recycledId);
-    } else {
-        node.setAttribute('id', id);
-        addVertex(id);
-        id += 1;
-    }
-    console.log(node.getAttribute('id'));
 
     return node;
 };
@@ -133,6 +135,7 @@ var drawLinker = function (x, y) {
     var linker = drawCircle(x, y, 6, 'rgb(0,255,0)', 'black', 0.5);
     linker.setAttribute('class', 'linker');
     linker.setAttribute('onmousedown', 'selectLinker(evt)');
+
     return linker;
 };
 
@@ -213,6 +216,7 @@ var deselectLinker = function (e) {
     } else {
         var v1 = selectedLinker.parentElement.parentElement.getAttribute('id')
         var v2 = overNode.parentElement.getAttribute('id')
+        var arrow = document.createElementNS(svgns, 'g');
         linkPointer.setAttribute('v1', v1);
         linkPointer.setAttribute('v2', v2);
         linkPointer.setAttribute('stroke', 'black');
@@ -221,8 +225,13 @@ var deselectLinker = function (e) {
         linkPointer.setAttribute('onclick', 'selectEdge(evt)');
         linkPointer.setAttribute('onmouseover', 'hoverElement(evt)');
         linkPointer.setAttribute('onmouseout', 'outElement(evt)');
-        svg.insertBefore(linkPointer, svg.firstChild);
-        addEdge(v1, v2, linkPointer);
+        reshapeEdge(linkPointer, 0, V[v1], V[v2]);
+        var arrowHead = drawArrowHead(linkPointer);
+        arrow.appendChild(linkPointer);
+        arrow.appendChild(arrowHead);
+        
+        svg.insertBefore(arrow, svg.firstChild);
+        addEdge(v1, v2, arrow);
     }
     selectedLinker = 0;
     linkPointer = 0;
@@ -349,14 +358,9 @@ var moveElement = function (e) {
     var l = edges.length;
     for (i = 0; i < l; i++) {
         var edge = edges[i];
-        var v1 = edge.getAttribute('v1');
-        if (id == v1) {
-            edge.setAttribute('x1', selectedElement.getAttribute('position-x'));
-            edge.setAttribute('y1', selectedElement.getAttribute('position-y'));
-        } else {
-            edge.setAttribute('x2', selectedElement.getAttribute('position-x'));
-            edge.setAttribute('y2', selectedElement.getAttribute('position-y'));
-        }
+        var v1 = edge.children[0].getAttribute('v1');
+        var v2 = edge.children[0].getAttribute('v2');
+        reshapeEdge(edge.children[0], edge.children[1], V[v1], V[v2]);
     }
 
     currentX = e.clientX;
@@ -374,14 +378,9 @@ var deselectElement = function (evt) {
     var l = edges.length;
     for (i = 0; i < l; i++) {
         var edge = edges[i];
-        var v1 = edge.getAttribute('v1');
-        if (id == v1) {
-            edge.setAttribute('x1', selectedElement.getAttribute('position-x'));
-            edge.setAttribute('y1', selectedElement.getAttribute('position-y'));
-        } else {
-            edge.setAttribute('x2', selectedElement.getAttribute('position-x'));
-            edge.setAttribute('y2', selectedElement.getAttribute('position-y'));
-        }
+        var v1 = edge.children[0].getAttribute('v1');
+        var v2 = edge.children[0].getAttribute('v2');
+        reshapeEdge(edge.children[0], edge.children[1], V[v1], V[v2]);
     }
 };
 
@@ -679,12 +678,25 @@ $('html').keyup(function (e) {
     }
 });
 
+// edit ends
 function endEdit(e) {
     var input = $(e.target),
         label = input && input.prev();
 
-    label.text(input.val() === '' ? defaultText : input.val());
+    label.text(input.val() === '' ? label.textContent : input.val());
     input.hide();
     label.show();
     editing = false;
+
+    // change selected element shape according to text
+    var id = label.attr('id');
+    if(id == 'radius'){
+        scale(parseFloat(input.val()), parseFloat(input.val()));
+    }else if(id == 'text'){
+        selectedElement.children[1].textContent = input.val();
+    }else if(id == 'text-size'){
+        selectedElement.children[1].setAttribute('font-size', input.val());
+    }
+
+    input.val('');
 }

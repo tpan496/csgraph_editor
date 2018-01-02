@@ -12,11 +12,11 @@ var getReusableId = function () {
     }
 };
 
-var addVertex = function (v) {
+var addVertex = function (v, node) {
     if (v < V.length) {
-        V[v] = v;
+        V[v] = node;
     } else {
-        V.push(v);
+        V.push(node);
         E.push([]);
         E_shape.push([]);
     }
@@ -53,5 +53,6 @@ var deleteVertex = function (v) {
     }
     E[v] = [];
     E_shape[v] = [];
+    V[v] = 0;
     vacantPositions.push(v);
 };

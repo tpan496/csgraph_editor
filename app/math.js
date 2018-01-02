@@ -12,6 +12,12 @@ var dist = function (a, b) {
     return Math.sqrt(dx * dx + dx * dx) * mult;
 };
 
+var dist2 = function (a, b) {
+    var dx = a[0] - b[0];
+    var dy = a[1] - b[1];
+    return Math.sqrt(dx * dx + dy * dy);
+};
+
 var getMatrix = function (x) {
     var matrix = x.getAttribute("transform").slice(7, -1).split(' ');
     for (var i = 0; i < 6; i++) {
@@ -58,4 +64,82 @@ var getRadius = function (x) {
 
 var getBaseRadius = function (x) {
     return parseFloat(x.getAttribute("r"));
+};
+
+var reshapeEdge = function(edge, head, node1, node2){
+    var r1x = parseFloat(node1.getAttribute('position-x'));
+    var r1y = parseFloat(node1.getAttribute('position-y'));
+    var r1 = node1.getAttribute('radius');
+    var r2x = parseFloat(node2.getAttribute('position-x'));
+    var r2y = parseFloat(node2.getAttribute('position-y'));
+    var r2 = node2.getAttribute('radius');
+
+    var d = Math.abs(dist2([r1x,r1y],[r2x,r2y]));
+    var dx = Math.abs(r1x-r2x);
+    var dy = Math.abs(r1y-r2y);
+    var sina = d == 0 ? 0 : dy/d;
+    var cosa = d == 0 ? 0 : dx/d;
+
+    var x1,x2,y1,y2 = 0;
+    if(r1x<r2x){
+        x1 = r1x + r1*cosa;
+        x2 = r2x - r2*cosa;
+    }else{
+        x1 = r1x - r1*cosa;
+        x2 = r2x + r2*cosa;
+    }
+
+    if(r1y<r2y){
+        y1 = r1y + r1*sina;
+        y2 = r2y - r2*sina;
+    }else{
+        y1 = r1y - r1*sina;
+        y2 = r2y + r2*sina;
+    }
+
+    edge.setAttribute('x1', x1);
+    edge.setAttribute('x2', x2);
+    edge.setAttribute('y1', y1);
+    edge.setAttribute('y2', y2);
+
+    if(!head){
+        return;
+    }
+    // arrowhead
+    var a = 15;
+    var theta = Math.acos(dx / d) - Math.PI / 6;
+    var gamma = Math.PI - theta - Math.PI / 3;
+
+    console.log(theta*180/Math.PI);
+    console.log(gamma*180/Math.PI);
+
+    var xLeft, yLeft, xRight, yRight;
+    if(x1<x2){
+        xLeft = x2 - a * Math.abs(Math.cos(theta));
+        xRight = x2 - a * Math.abs(Math.cos(gamma));
+    }else{
+        xLeft = x2 + a * Math.abs(Math.cos(theta));
+        xRight = x2 + a * Math.abs(Math.cos(gamma));
+    }
+
+    if(y1<y2){
+        yLeft = y2 - a * Math.sin(theta);
+        yRight = y2 - a * Math.sin(gamma);
+    }else{
+        yLeft = y2 + a * Math.sin(theta);
+        yRight = y2 + a * Math.sin(gamma);
+    }
+
+
+    var array = arr = [[xLeft, yLeft],
+    [xRight, yRight],
+    [x2, y2]];
+
+    head.setAttribute('points', '');
+    for (value of array) {
+        var point = svg.createSVGPoint();
+        point.x = value[0];
+        point.y = value[1];
+        head.points.appendItem(point);
+    }
 };
