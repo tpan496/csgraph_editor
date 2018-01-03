@@ -112,10 +112,18 @@ var drawArrowHead = function (edge) {
     var xLeft, yLeft, xRight, yRight;
     if(x1<x2){
         xLeft = x2 - a * Math.abs(Math.cos(theta));
-        xRight = x2 - a * Math.abs(Math.cos(gamma));
+        if(gamma < Math.PI/2){
+            xRight = x2 + a*Math.abs(Math.cos(gamma));
+        }else{
+            xRight = x2 - a * Math.abs(Math.cos(gamma));
+        }
     }else{
         xLeft = x2 + a * Math.abs(Math.cos(theta));
-        xRight = x2 + a * Math.abs(Math.cos(gamma));
+        if(gamma < Math.PI/2){
+            xRight = x2 - a*Math.abs(Math.cos(gamma));
+        }else{
+            xRight = x2 + a * Math.abs(Math.cos(gamma));
+        }
     }
 
     if(y1<y2){

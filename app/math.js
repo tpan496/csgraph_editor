@@ -110,10 +110,6 @@ var reshapeEdge = function(edge, head, node1, node2){
     var theta = Math.acos(dx / d) - Math.PI / 6;
     var gamma = Math.PI - theta - Math.PI / 3;
 
-    console.log(Math.acos(dx/d)*180/Math.PI);
-    console.log(theta*180/Math.PI);
-    console.log(gamma*180/Math.PI);
-
     var xLeft, yLeft, xRight, yRight;
     if(x1<x2){
         xLeft = x2 - a * Math.abs(Math.cos(theta));

@@ -80,6 +80,12 @@ var turnOffSelectedElementScaler = function () {
         if (text) {
             text.setAttribute('fill', 'black');
         }
+        console.log(selectedElement.getAttribute('class'));
+        if (selectedElement.getAttribute('class') == 'edge') {
+            selectedElement.setAttribute('stroke-dasharray', '');
+            selectedElement.setAttribute('stroke', 'black');
+            selectedElement.parentElement.children[1].setAttribute('fill', 'black');
+        }
         selectedElement = 0;
         displayBoard();
     }
@@ -229,7 +235,7 @@ var deselectLinker = function (e) {
         var arrowHead = drawArrowHead(linkPointer);
         arrow.appendChild(linkPointer);
         arrow.appendChild(arrowHead);
-        
+
         svg.insertBefore(arrow, svg.firstChild);
         addEdge(v1, v2, arrow);
     }
@@ -686,17 +692,105 @@ function endEdit(e) {
     label.text(input.val() === '' ? label.textContent : input.val());
     input.hide();
     label.show();
-    editing = false;
 
     // change selected element shape according to text
-    var id = label.attr('id');
-    if(id == 'radius'){
-        scale(parseFloat(input.val()), parseFloat(input.val()));
-    }else if(id == 'text'){
-        selectedElement.children[1].textContent = input.val();
-    }else if(id == 'text-size'){
-        selectedElement.children[1].setAttribute('font-size', input.val());
+    if (editing) {
+        var id = label.attr('id');
+        if (id == 'radius') {
+            scaleTo(parseFloat(input.val()));
+            console.log('time');
+        } else if (id == 'text') {
+            selectedElement.children[1].textContent = input.val();
+        } else if (id == 'text-size') {
+            selectedElement.children[1].setAttribute('font-size', input.val());
+        }
     }
+    editing = false;
 
     input.val('');
 }
+
+var scaleTo = function (targetRadius) {
+    if (!isNode(selectedElement)) {
+        return;
+    }
+    var mutator = selectedElement.children[2];
+    var circle = selectedElement.children[0];
+    var circleMatrix = getMatrix(circle);
+
+    // change scaler position
+    var scaler = mutator.children[0];
+
+    // check which is current scaler
+    var scalerNE = scaler.children[2];
+    var scalerSE = scaler.children[0];
+    var scalerNW = scaler.children[1];
+    var scalerSW = scaler.children[3];
+
+    var lineN = scaler.children[4];
+    var lineW = scaler.children[5];
+    var lineE = scaler.children[6];
+    var lineS = scaler.children[7];
+
+    var dr = parseFloat(targetRadius) - getRadius(circle);
+    var rate = parseFloat(targetRadius) / getBaseRadius(circle);
+    console.log(rate);
+
+    circleMatrix[0] = rate;
+    circleMatrix[3] = rate;
+    newMatrix = matrixToString(circleMatrix);
+    circle.setAttribute('transform', newMatrix);
+    updateRadius(circle, dr);
+
+    var swMatrix = getMatrix(scalerSW);
+    swMatrix[4] = getAbsoluteX(scalerSW) - dr;
+    swMatrix[5] = getAbsoluteY(scalerSW) + dr;
+    scalerSW.setAttribute('transform', matrixToString(swMatrix));
+    updateXY(scalerSW, -dr, dr);
+
+    var nwMatrix = getMatrix(scalerNW);
+    nwMatrix[4] = getAbsoluteX(scalerNW) - dr;
+    nwMatrix[5] = getAbsoluteY(scalerNW) - dr;
+    scalerNW.setAttribute('transform', matrixToString(nwMatrix));
+    updateXY(scalerNW, -dr, -dr);
+
+    var neMatrix = getMatrix(scalerNE);
+    neMatrix[4] = getAbsoluteX(scalerNE) + dr;
+    neMatrix[5] = getAbsoluteY(scalerNE) - dr;
+    scalerNE.setAttribute('transform', matrixToString(neMatrix));
+    updateXY(scalerNE, dr, -dr);
+
+    var seMatrix = getMatrix(scalerSE);
+    seMatrix[4] = getAbsoluteX(scalerSE) + dr;
+    seMatrix[5] = getAbsoluteY(scalerSE) + dr;
+    scalerSE.setAttribute('transform', matrixToString(seMatrix));
+    updateXY(scalerSE, dr, dr);
+
+    var nMatrix = getMatrix(lineN);
+    nMatrix[5] = getAbsoluteY(lineN) - dr;
+    nMatrix[0] = rate;
+    nMatrix[3] = rate;
+    lineN.setAttribute('transform', matrixToString(nMatrix));
+    updateXY(lineN, 0, -dr);
+
+    var wMatrix = getMatrix(lineW);
+    wMatrix[4] = getAbsoluteX(lineW) - dr;
+    wMatrix[0] = rate;
+    wMatrix[3] = rate;
+    lineW.setAttribute('transform', matrixToString(wMatrix));
+    updateXY(lineW, -dr, 0);
+
+    var sMatrix = getMatrix(lineS);
+    sMatrix[5] = getAbsoluteY(lineS) + dr;
+    sMatrix[0] = rate;
+    sMatrix[3] = rate;
+    lineS.setAttribute('transform', matrixToString(sMatrix));
+    updateXY(lineS, 0, dr);
+
+    var eMatrix = getMatrix(lineE);
+    eMatrix[4] = getAbsoluteX(lineE) + dr;
+    eMatrix[0] = rate;
+    eMatrix[3] = rate;
+    lineE.setAttribute('transform', matrixToString(eMatrix));
+    updateXY(lineE, dr, 0);
+};

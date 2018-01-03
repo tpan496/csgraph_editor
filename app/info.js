@@ -11,6 +11,9 @@ var displayInfo = function (node) {
         fromInfo.parent().show();
         toInfo.html(node.getAttribute('v2'));
         toInfo.parent().show();
+        node.setAttribute('stroke-dasharray', [5,5]);
+        node.setAttribute('stroke', 'rgb(0,122,255)');
+        node.parentElement.children[1].setAttribute('fill', 'rgb(0,122,255)');
     }
     elementInfo.html(node.getAttribute('class'));
     if(node.children[1]){
