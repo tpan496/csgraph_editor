@@ -56,3 +56,23 @@ var deleteVertex = function (v) {
     V[v] = 0;
     vacantPositions.push(v);
 };
+
+var deleteEdge = function(u,v){
+    var degU = E[u].length;
+    var degV = E[v].length;
+    for(i=0; i<degV; i++){
+        if(E[u][i]==v){
+            E[u].splice(i, 1);
+            E_shape[u].splice(i,1);
+            break;
+        }
+    }
+
+    for(i=0; i<degU; i++){
+        if(E[v][i]==u){
+            E[v].splice(i, 1);
+            E_shape[v].splice(i,1);
+            break;
+        }
+    }
+}

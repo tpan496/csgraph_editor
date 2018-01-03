@@ -1,6 +1,7 @@
 var displayInfo = function (node) {
     clearBoard();
     $('.clickedit').hide();
+    elementInfo.html(node.getAttribute('class'));
     if (node.getAttribute('class') == 'node') {
         idInfo.html(node.getAttribute('id'));
         idInfo.parent().show();
@@ -14,8 +15,14 @@ var displayInfo = function (node) {
         node.setAttribute('stroke-dasharray', [5,5]);
         node.setAttribute('stroke', 'rgb(0,122,255)');
         node.parentElement.children[1].setAttribute('fill', 'rgb(0,122,255)');
+    } else if (node.getAttribute('class') == 'label'){
+        textInfo.html(node.children[0].textContent);
+        textInfo.parent().show();
+        textSizeInfo.html(node.children[0].getAttribute('font-size'));
+        textSizeInfo.parent().show();
+        return;
     }
-    elementInfo.html(node.getAttribute('class'));
+    
     if(node.children[1]){
         if(node.children[1].getAttribute('class') == 'text'){
             textInfo.html(node.children[1].textContent);

@@ -18,14 +18,16 @@ var drawCircle = function (x, y, radius, fill, stroke, strokeWidth) {
     return circle;
 };
 
-var drawRect = function (x, y, w, h, fill, id) {
+var drawRect = function (x, y, w, h) {
     var rect = document.createElementNS(svgns, 'rect');
     rect.setAttributeNS(null, 'x', x);
     rect.setAttributeNS(null, 'y', y);
     rect.setAttributeNS(null, 'width', w);
     rect.setAttributeNS(null, 'height', h);
-    rect.setAttributeNS(null, 'fill', fill);
-    rect.setAttributeNS(null, 'id', id);
+    rect.setAttribute('stroke', 'rgb(0,122,255)');
+    rect.setAttribute('fill', 'transparent');
+    rect.setAttribute('stroke-dasharray', [2,2]);
+    rect.setAttribute('stroke-width', 2);
     return rect;
 };
 
