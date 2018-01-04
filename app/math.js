@@ -69,10 +69,10 @@ var getBaseRadius = function (x) {
 var reshapeEdge = function(edge, head, node1, node2){
     var r1x = parseFloat(node1.getAttribute('position-x'));
     var r1y = parseFloat(node1.getAttribute('position-y'));
-    var r1 = node1.getAttribute('radius');
+    var r1 = node1.children[0].getAttribute('radius');
     var r2x = parseFloat(node2.getAttribute('position-x'));
     var r2y = parseFloat(node2.getAttribute('position-y'));
-    var r2 = node2.getAttribute('radius');
+    var r2 = node2.children[0].getAttribute('radius');
 
     var d = Math.abs(dist2([r1x,r1y],[r2x,r2y]));
     var dx = Math.abs(r1x-r2x);

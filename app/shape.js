@@ -101,7 +101,7 @@ var drawArrowHead = function (edge) {
     var x2 = parseFloat(edge.getAttribute('x2'));
     var y1 = parseFloat(edge.getAttribute('y1'));
     var y2 = parseFloat(edge.getAttribute('y2'));
-    var polygon = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
+    var polygon = document.createElementNS(svgns, "polygon");
     svg.appendChild(polygon);
 
     var d = dist2([x1, y1], [x2, y2]);
@@ -154,4 +154,23 @@ var drawArrowHead = function (edge) {
     polygon.setAttribute('fill', 'black');
 
     return polygon;
+};
+
+var drawInputBox = function(x,y,w,h){
+    var foreign = document.createElementNS(svgns, 'foreignObject');
+    foreign.setAttribute('x', x);
+    foreign.setAttribute('y', y);
+    foreign.setAttribute('width', 100);
+    foreign.setAttribute('height', 100);
+    var input = document.createElement('input')
+    input.x = x;
+    input.y = y;
+    input.type = 'text';
+    input.value = 'text';
+    input.style.textAlign = "center";
+    input.style.fontSize = "15pt";
+    input.size = 4;
+    input.style.paddingTop = 0;
+    foreign.appendChild(input);
+    return foreign;
 };

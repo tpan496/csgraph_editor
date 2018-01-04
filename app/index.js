@@ -3,6 +3,7 @@ var svgns = "http://www.w3.org/2000/svg"
 var selectedElement = 0;
 var selectedScaler = 0;
 var selectedLinker = 0;
+var selectedEditBox = 0;
 var linkPointer = 0;
 var mouseOverNode = false;
 var overNode = 0;
@@ -13,6 +14,7 @@ var id = 0;
 var dragging = false;
 var linkerMouseDown = false;
 var editing = false;
+var forceAlign = false;
 
 // ui infos
 var elementInfo;
@@ -81,6 +83,7 @@ $(document).ready(function () {
     }).prev().click(function () {
         $(this).hide();
         $(this).next().show().focus();
+        $(this).next().val($(this).text());
 
         editing = true;
     });
@@ -106,6 +109,9 @@ var turnOffSelectedElementScaler = function () {
         }
         if (selectedElement.getAttribute('class') == 'label') {
             selectedElement.children[1].setAttribute('stroke', 'transparent');
+            if(editing){
+                editLabelEnd();
+            }
         }
         selectedElement = 0;
         displayBoard();
@@ -117,14 +123,20 @@ var drawLabel = function (x, y) {
     var text = drawText(x, y, '');
     text.setAttribute('font-size', 20);
     var markerRect = drawRect(x, y, 0, 0);
+    var input = drawInputBox(x, y, 0, 0);
+    input.setAttribute('visibility', 'hidden');
+    input.setAttribute('onmouseover', 'hoverElement(evt)');
+    input.setAttribute('onmouseout', 'outElement(evt)');
     label.setAttribute('cursor', 'move');
     label.appendChild(text);
     label.appendChild(markerRect);
+    label.appendChild(input);
     label.setAttribute('class', 'label');
     label.setAttribute('transform', 'matrix(1 0 0 1 0 0)');
     label.setAttribute('onmousedown', 'selectLabel(evt)');
     label.setAttribute('onmouseover', 'hoverElement(evt)');
     label.setAttribute('onmouseout', 'outElement(evt)');
+    label.setAttribute('ondblclick', 'editLabel(evt)');
     label.setAttribute('position-x', x);
     label.setAttribute('position-y', y);
     label.setAttribute('origin-x', x);
@@ -132,13 +144,46 @@ var drawLabel = function (x, y) {
     return label;
 }
 
+var editLabel = function(evt){
+    if(selectedElement.getAttribute('class') == 'label'){
+        editing = true;
+        selectedElement.children[2].setAttribute('visibility', 'visible');
+        selectedElement.children[0].setAttribute('pointer-event', 'none');
+        selectedEditBox = selectedElement.children[2];
+        svg.appendChild(selectedEditBox);
+        selectedElement.setAttribute('pointer-event','none');
+    }
+};
+
+var editLabelEnd = function(){
+    if(selectedElement.getAttribute('class')=='label'){
+        editing = false;
+        selectedElement.appendChild(selectedEditBox);
+        selectedEditBox.setAttribute('visibility', 'hidden');
+        selectedElement.children[0].textContent = selectedEditBox.children[0].value;
+        selectedElement.children[0].setAttribute('pointer-event', 'all');
+        updateRect(selectedElement);
+        displayInfo(selectedElement);
+        selectedElement.children[0].blur();
+    }
+};
+
 var updateRect = function (label) {
-    var bbox = label.getBBox();
-    label.children[1].setAttribute('x', parseFloat(label.children[1].getAttribute('x')) - bbox.width / 2);
-    label.children[1].setAttribute('y', parseFloat(label.children[1].getAttribute('y')) - bbox.height / 2);
+    var bbox = label.children[0].getBBox();
+    label.children[1].setAttribute('x', bbox.x);
+    label.children[1].setAttribute('y', bbox.y);
     label.children[1].setAttribute('width', bbox.width);
     label.children[1].setAttribute('height', bbox.height);
-}
+
+    label.children[2].setAttribute('x', parseFloat(label.getAttribute('position-x')) - bbox.width/2);
+    label.children[2].setAttribute('y', parseFloat(label.getAttribute('position-y')) - bbox.height/2);
+    label.children[2].setAttribute('width', bbox.width);
+    label.children[2].setAttribute('height', bbox.height);
+
+    label.children[2].children[0].setAttribute('x', bbox.x);
+    label.children[2].children[0].setAttribute('y', bbox.y);
+    label.children[2].children[0].setAttribute('size', label.children[0].textContent.length);
+};
 
 var drawNode = function (x, y) {
     var node = document.createElementNS(svgns, 'g');
@@ -266,7 +311,7 @@ var moveLinker = function (e) {
 var deselectLinker = function (e) {
     e.preventDefault();
     linkerMouseDown = false;
-    if (!mouseOverNode || !overNode.parentElement.hasAttribute("position-x")) {
+    if (!mouseOverNode || !(overNode.parentElement.getAttribute('class') == 'node')) {
         svg.removeChild(svg.lastChild);
     } else {
         var v1 = selectedLinker.parentElement.parentElement.getAttribute('id')
@@ -436,7 +481,7 @@ var moveElement = function (e) {
     selectedElement.setAttribute('transform', newMatrix);
     updateXY(selectedElement, dx, dy);
 
-    if (selectedElement.getAttribute('class') == 'node') {
+    if (isNode(selectedElement)) {
         var id = selectedElement.getAttribute('id');
         var edges = getEdges(id);
         var l = edges.length;
@@ -446,6 +491,11 @@ var moveElement = function (e) {
             var v2 = edge.children[0].getAttribute('v2');
             reshapeEdge(edge.children[0], edge.children[1], V[v1], V[v2]);
         }
+    } else if(selectedElement.getAttribute('class') == 'label'){
+        var foreign = selectedElement.children[2];
+        var bbox = selectedElement.children[0].getBBox();
+        foreign.setAttribute('x', parseFloat(selectedElement.getAttribute('position-x')) - bbox.width/2);
+        foreign.setAttribute('y', parseFloat(selectedElement.getAttribute('position-y')) - bbox.height/2);
     }
 
     currentX = e.clientX;
@@ -458,7 +508,7 @@ var deselectElement = function (evt) {
     svg.removeAttribute("onmouseup");
     selectedScaler = 0;
 
-    if (selectedElement.getAttribute('class') == 'node') {
+    if (isNode(selectedElement)) {
         var id = selectedElement.getAttribute('id');
         var edges = getEdges(id);
         var l = edges.length;
@@ -502,19 +552,29 @@ $('html').keyup(function (e) {
     if (!editing) {
         if (e.keyCode == 46 || e.keyCode == 8) {
             if (selectedElement != 0) {
-                if (selectedElement.getAttribute('class') == 'node') {
+                if (isNode(selectedElement)) {
                     svg.removeChild(selectedElement);
-                } else if (selectedElement.getAttribute('class') == 'edge') {
-                    svg.removeChild(selectedElement.parentElement);
-                }
-                if (selectedElement.getAttribute('class') == 'node') {
                     deleteVertex(selectedElement.getAttribute('id'));
-                } else if (selectedElement.getAttribute('class') == 'edge') {
+                } else if (isEdge(selectedElement)) {
+                    svg.removeChild(selectedElement.parentElement);
                     deleteEdge(selectedElement.getAttribute('v1'), selectedElement.getAttribute('v2'));
+                }else if (selectedElement.getAttribute('class') == 'label'){
+                    svg.removeChild(selectedElement);
                 }
+                displayBoard();
                 selectedElement = 0;
             }
         }
+    }
+    if(forceAlign){
+        forceAlign = false;
+    }
+});
+
+// force align
+$('html').keydown(function (e) {
+    if(e.keyCode == 65){
+        forceAlign = true;
     }
 });
 
@@ -531,7 +591,6 @@ function endEdit(e) {
         var id = label.attr('id');
         if (id == 'radius') {
             scaleTo(parseFloat(input.val()));
-            console.log('time');
         } else if (id == 'text') {
             if (isNode(selectedElement)) {
                 selectedElement.children[1].textContent = input.val();
@@ -553,6 +612,11 @@ function endEdit(e) {
                 selectedElement.children[1].setAttribute('y', parseFloat(selectedElement.children[0].getAttribute('y')) - bbox.height / 2);
                 selectedElement.children[1].setAttribute('width', bbox.width);
                 selectedElement.children[1].setAttribute('height', bbox.height);
+
+                selectedElement.children[2].children[0].style.fontSize = input.val()*0.8+"pt";
+                selectedElement.children[2].children[0].height = bbox.height;
+                selectedElement.children[0].setAttribute('pointer-event', 'all');
+                updateRect(selectedElement);
             }
         }
         input.val('');

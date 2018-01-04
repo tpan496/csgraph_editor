@@ -81,6 +81,12 @@ label{
     text-align: right;
     position: absolute;
     right: 10px;
+    max-width: 80px;
+    min-width: 10px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    display: inline-block;
+    white-space: nowrap;
 }
 
 label:hover{
@@ -96,7 +102,7 @@ label:hover{
 .clickedit{
     position: absolute;
     right: 10px;
-    width: 25%;
+    width: 40%;
     text-align: right;
     background: #3f3f3f;
     border-radius:5px;
