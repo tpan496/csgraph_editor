@@ -158,6 +158,11 @@ var editLabel = function(evt){
 var editLabelEnd = function(){
     if(selectedElement.getAttribute('class')=='label'){
         editing = false;
+        if(selectedEditBox.children[0].value === ''){
+            svg.removeChild(selectedEditBox);
+            svg.removeChild(selectedElement);
+            return;
+        }
         selectedElement.appendChild(selectedEditBox);
         selectedEditBox.setAttribute('visibility', 'hidden');
         selectedElement.children[0].textContent = selectedEditBox.children[0].value;
@@ -601,6 +606,7 @@ function endEdit(e) {
                 selectedElement.children[1].setAttribute('y', parseFloat(selectedElement.children[0].getAttribute('y')) - bbox.height / 2);
                 selectedElement.children[1].setAttribute('width', bbox.width);
                 selectedElement.children[1].setAttribute('height', bbox.height);
+                selectedElement.children[2].children[0].value = input.val();
             }
         } else if (id == 'text-size') {
             if (isNode(selectedElement)) {
