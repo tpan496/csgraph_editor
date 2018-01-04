@@ -21,6 +21,7 @@ var scale = function (dx, dy) {
     // change circle and node position as well
     updateXY(circle, dx / 2, dy / 2);
     updateXY(selectedElement, dx / 2, dy / 2);
+    displayXY(selectedElement);
 
     // change text position
     var text = selectedElement.children[1];
@@ -250,7 +251,7 @@ var scale = function (dx, dy) {
         updateXY(lineE, 0, dy / 2);
     }
 
-    radiusInfo.html('radius: ' + circle.getAttribute('radius'));
+    radiusInfo.html(circle.getAttribute('radius'));
 };
 
 var scaleTo = function (targetRadius) {

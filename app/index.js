@@ -10,6 +10,7 @@ var overNode = 0;
 var currentX = 0;
 var currentY = 0;
 var currentMatrix = [1, 0, 0, 1, 0, 0];
+var currentEditTarget = 0;
 var id = 0;
 var dragging = false;
 var linkerMouseDown = false;
@@ -18,6 +19,8 @@ var forceAlign = false;
 
 // ui infos
 var elementInfo;
+var xInfo;
+var yInfo;
 var radiusInfo;
 var idInfo;
 var fromInfo;
@@ -30,6 +33,8 @@ $(document).ready(function () {
     logger = $('#logger');
     radiusInfo = $('label#radius');
     idInfo = $('label#id');
+    xInfo = $('label#x');
+    yInfo = $('label#y');
     elementInfo = $('.info#element');
     fromInfo = $('label#from');
     toInfo = $('label#to');
@@ -49,6 +54,7 @@ $(document).ready(function () {
         }
         selectedElement = node;
         selectedElement.children[1].setAttribute('fill', 'rgb(175,175,175)');
+        currentMatrix = getMatrix(selectedElement);
         displayInfo(node);
     });
 
@@ -65,11 +71,13 @@ $(document).ready(function () {
             turnOffSelectedElementScaler();
         }
         selectedElement = label;
+        currentMatrix = getMatrix(selectedElement);
         displayInfo(label);
     });
     $('#paper').click(function () {
         if (selectedElement != 0 && !mouseOverNode) {
             turnOffSelectedElementScaler();
+            console.log('turn off');
         }
     });
 
@@ -86,6 +94,7 @@ $(document).ready(function () {
         $(this).next().val($(this).text());
 
         editing = true;
+        currentEditTarget = $(this).next();
     });
 });
 
@@ -109,7 +118,7 @@ var turnOffSelectedElementScaler = function () {
         }
         if (selectedElement.getAttribute('class') == 'label') {
             selectedElement.children[1].setAttribute('stroke', 'transparent');
-            if(editing){
+            if (editing) {
                 editLabelEnd();
             }
         }
@@ -144,21 +153,22 @@ var drawLabel = function (x, y) {
     return label;
 }
 
-var editLabel = function(evt){
-    if(selectedElement.getAttribute('class') == 'label'){
+var editLabel = function (evt) {
+    if (selectedElement.getAttribute('class') == 'label') {
         editing = true;
         selectedElement.children[2].setAttribute('visibility', 'visible');
         selectedElement.children[0].setAttribute('pointer-event', 'none');
         selectedEditBox = selectedElement.children[2];
         svg.appendChild(selectedEditBox);
-        selectedElement.setAttribute('pointer-event','none');
+        selectedElement.setAttribute('pointer-event', 'none');
     }
 };
 
-var editLabelEnd = function(){
-    if(selectedElement.getAttribute('class')=='label'){
+var editLabelEnd = function () {
+    console.log('edit end');
+    if (selectedElement.getAttribute('class') == 'label') {
         editing = false;
-        if(selectedEditBox.children[0].value === ''){
+        if (selectedEditBox.children[0].value === '') {
             svg.removeChild(selectedEditBox);
             svg.removeChild(selectedElement);
             return;
@@ -180,8 +190,8 @@ var updateRect = function (label) {
     label.children[1].setAttribute('width', bbox.width);
     label.children[1].setAttribute('height', bbox.height);
 
-    label.children[2].setAttribute('x', parseFloat(label.getAttribute('position-x')) - bbox.width/2);
-    label.children[2].setAttribute('y', parseFloat(label.getAttribute('position-y')) - bbox.height/2);
+    label.children[2].setAttribute('x', parseFloat(label.getAttribute('position-x')) - bbox.width / 2);
+    label.children[2].setAttribute('y', parseFloat(label.getAttribute('position-y')) - bbox.height / 2);
     label.children[2].setAttribute('width', bbox.width);
     label.children[2].setAttribute('height', bbox.height);
 
@@ -356,6 +366,18 @@ var deselectLinker = function (e) {
 
 var selectEdge = function (e) {
     e.preventDefault();
+    if (editing) {
+        editing = false;
+        if (currentEditTarget) {
+            currentEditTarget.hide();
+            currentEditTarget.prev().show();
+            currentEditTarget = 0;
+        }
+        if (selectedElement.getAttribute('class') == 'label') {
+            editLabelEnd();
+        }
+    }
+
     if (e.target.getAttribute('class') != 'edge') {
         return;
     }
@@ -433,6 +455,18 @@ var moveScaler = function (e) {
 
 var selectLabel = function (e) {
     e.preventDefault();
+    if (editing) {
+        editing = false;
+        if (currentEditTarget) {
+            currentEditTarget.hide();
+            currentEditTarget.prev().show();
+            currentEditTarget = 0;
+        }
+        else if (selectedElement.getAttribute('class') == 'label') {
+            editLabelEnd();
+        }
+    }
+
     if (e.target.parentElement.getAttribute("class") != "label") {
         return;
     }
@@ -453,6 +487,17 @@ var selectLabel = function (e) {
 
 var selectElement = function (e) {
     e.preventDefault();
+    if (editing) {
+        editing = false;
+        if (currentEditTarget) {
+            currentEditTarget.hide();
+            currentEditTarget.prev().show();
+            currentEditTarget = 0;
+        }
+        if (selectedElement.getAttribute('class') == 'label') {
+            editLabelEnd();
+        }
+    }
     if (e.target.parentElement.getAttribute("class") != "node") {
         return;
     }
@@ -485,6 +530,7 @@ var moveElement = function (e) {
 
     selectedElement.setAttribute('transform', newMatrix);
     updateXY(selectedElement, dx, dy);
+    displayXY(selectedElement);
 
     if (isNode(selectedElement)) {
         var id = selectedElement.getAttribute('id');
@@ -496,11 +542,11 @@ var moveElement = function (e) {
             var v2 = edge.children[0].getAttribute('v2');
             reshapeEdge(edge.children[0], edge.children[1], V[v1], V[v2]);
         }
-    } else if(selectedElement.getAttribute('class') == 'label'){
+    } else if (selectedElement.getAttribute('class') == 'label') {
         var foreign = selectedElement.children[2];
         var bbox = selectedElement.children[0].getBBox();
-        foreign.setAttribute('x', parseFloat(selectedElement.getAttribute('position-x')) - bbox.width/2);
-        foreign.setAttribute('y', parseFloat(selectedElement.getAttribute('position-y')) - bbox.height/2);
+        foreign.setAttribute('x', parseFloat(selectedElement.getAttribute('position-x')) - bbox.width / 2);
+        foreign.setAttribute('y', parseFloat(selectedElement.getAttribute('position-y')) - bbox.height / 2);
     }
 
     currentX = e.clientX;
@@ -563,7 +609,7 @@ $('html').keyup(function (e) {
                 } else if (isEdge(selectedElement)) {
                     svg.removeChild(selectedElement.parentElement);
                     deleteEdge(selectedElement.getAttribute('v1'), selectedElement.getAttribute('v2'));
-                }else if (selectedElement.getAttribute('class') == 'label'){
+                } else if (selectedElement.getAttribute('class') == 'label') {
                     svg.removeChild(selectedElement);
                 }
                 displayBoard();
@@ -571,14 +617,23 @@ $('html').keyup(function (e) {
             }
         }
     }
-    if(forceAlign){
+    if (forceAlign) {
         forceAlign = false;
+    }
+});
+
+// enter to complete edit
+$('html').keyup(function (e) {
+    if (e.keyCode == 13) {
+        if (selectedElement.getAttribute('class') == 'label' && editing) {
+            editLabelEnd();
+        }
     }
 });
 
 // force align
 $('html').keydown(function (e) {
-    if(e.keyCode == 65){
+    if (e.keyCode == 65) {
         forceAlign = true;
     }
 });
@@ -619,9 +674,57 @@ function endEdit(e) {
                 selectedElement.children[1].setAttribute('width', bbox.width);
                 selectedElement.children[1].setAttribute('height', bbox.height);
 
-                selectedElement.children[2].children[0].style.fontSize = input.val()*0.8+"pt";
+                selectedElement.children[2].children[0].style.fontSize = input.val() * 0.8 + "pt";
                 selectedElement.children[2].children[0].height = bbox.height;
                 selectedElement.children[0].setAttribute('pointer-event', 'all');
+                updateRect(selectedElement);
+            }
+        } else if (id == 'x') {
+            var newPosX = parseFloat(input.val());
+            var dx = newPosX - parseFloat(selectedElement.getAttribute('position-x'));
+            currentMatrix[4] += dx;
+            newMatrix = "matrix(" + currentMatrix.join(' ') + ")";
+            selectedElement.setAttribute('transform', newMatrix);
+            updateXY(selectedElement, dx, 0);
+            displayXY(selectedElement);
+            if (isNode(selectedElement)) {
+                var id = selectedElement.getAttribute('id');
+                var edges = getEdges(id);
+                var l = edges.length;
+                for (i = 0; i < l; i++) {
+                    var edge = edges[i];
+                    var v1 = edge.children[0].getAttribute('v1');
+                    var v2 = edge.children[0].getAttribute('v2');
+                    reshapeEdge(edge.children[0], edge.children[1], V[v1], V[v2]);
+                }
+            } else if (selectedElement.getAttribute('class') == 'label') {
+                var foreign = selectedElement.children[2];
+                var bbox = selectedElement.children[0].getBBox();
+                foreign.setAttribute('x', parseFloat(selectedElement.getAttribute('position-x')) - bbox.width / 2);
+                updateRect(selectedElement);
+            }
+        } else if (id == 'y') {
+            var newPosY = parseFloat(input.val());
+            var dy = newPosY - parseFloat(selectedElement.getAttribute('position-y'));
+            currentMatrix[5] += dy;
+            newMatrix = "matrix(" + currentMatrix.join(' ') + ")";
+            selectedElement.setAttribute('transform', newMatrix);
+            updateXY(selectedElement, 0, dy);
+            displayXY(selectedElement);
+            if (isNode(selectedElement)) {
+                var id = selectedElement.getAttribute('id');
+                var edges = getEdges(id);
+                var l = edges.length;
+                for (i = 0; i < l; i++) {
+                    var edge = edges[i];
+                    var v1 = edge.children[0].getAttribute('v1');
+                    var v2 = edge.children[0].getAttribute('v2');
+                    reshapeEdge(edge.children[0], edge.children[1], V[v1], V[v2]);
+                }
+            } else if (selectedElement.getAttribute('class') == 'label') {
+                var foreign = selectedElement.children[2];
+                var bbox = selectedElement.children[0].getBBox();
+                foreign.setAttribute('y', parseFloat(selectedElement.getAttribute('position-y')) - bbox.height / 2);
                 updateRect(selectedElement);
             }
         }
