@@ -54,6 +54,7 @@ var exportPNG = function () {
 };
 
 var saveXML = function () {
+    turnOffSelectedElementScaler();
     //get svg source.
     var serializer = new XMLSerializer();
     var source = serializer.serializeToString(svg);
@@ -85,7 +86,6 @@ var loadXML = function () {
     input.accept = '.xml';
     input.onchange = function (e) {
         var loadedXML = input.files[0];
-        console.log(loadedXML);
         var type = loadedXML.name.split('.')[1];
         if (!type || type != 'xml') {
             alert('Incorrect file format');
@@ -95,8 +95,19 @@ var loadXML = function () {
         var reader = new FileReader();
         reader.onload = function () {
             var dataURL = reader.result;
-            console.log(dataURL);
-            svg.innerHTML = dataURL;
+            delete svg;
+            var content = $('#content');
+            $('#paper').html(dataURL).append(content)
+            .find('#box').appendTo($('#paper'));;
+            svg = $('svg')[0];
+            svg.setAttribute('z-index', -1);
+            generateGraphFromXml();
+            $('svg').click(function () {
+                if (selectedElement != 0 && !mouseOverNode) {
+                    turnOffSelectedElementScaler();
+                    console.log('turn off');
+                }
+            });
         };
         reader.readAsText(loadedXML);
     };

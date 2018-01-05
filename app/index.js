@@ -1,4 +1,3 @@
-var logger;
 var svgns = "http://www.w3.org/2000/svg"
 var selectedElement = 0;
 var selectedScaler = 0;
@@ -11,7 +10,7 @@ var currentX = 0;
 var currentY = 0;
 var currentMatrix = [1, 0, 0, 1, 0, 0];
 var currentEditTarget = 0;
-var id = 0;
+var serialId = 0;
 var dragging = false;
 var linkerMouseDown = false;
 var editing = false;
@@ -32,7 +31,6 @@ var directedOnButton;
 
 $(document).ready(function () {
     svg = $('svg')[0];
-    logger = $('#logger');
     radiusInfo = $('label#radius');
     idInfo = $('label#id');
     xInfo = $('label#x');
@@ -238,10 +236,10 @@ var drawNode = function (x, y) {
         addVertex(recycledId, node);
         text = drawText(x, y, recycledId);
     } else {
-        node.setAttribute('id', id);
-        addVertex(id, node);
-        text = drawText(x, y, id);
-        id += 1;
+        node.setAttribute('id', serialId);
+        addVertex(serialId, node);
+        text = drawText(x, y, serialId);
+        serialId += 1;
     }
 
     node.appendChild(circle);
@@ -438,7 +436,6 @@ var selectScaler = function (e) {
 
 var moveScaler = function (e) {
     e.preventDefault();
-    logger.html(e.clientX);
     var dx = e.clientX - currentX;
     var dy = e.clientY - currentY;
     var scalerId = selectedScaler.getAttribute('id');

@@ -13,13 +13,12 @@ var getReusableId = function () {
 };
 
 var addVertex = function (v, node) {
-    if (v < V.length) {
-        V[v] = node;
-    } else {
-        V.push(node);
+    while(V.length <= v){
+        V.push(-1);
         E.push([]);
         E_shape.push([]);
     }
+    V[v] = node;
 };
 
 var addEdge = function (u, v, line) {
@@ -60,14 +59,6 @@ var deleteVertex = function (v) {
 var deleteEdge = function(u,v){
     var degU = E[u].length;
     var degV = E[v].length;
-    for(i=0; i<degV; i++){
-        if(E[u][i]==v){
-            E[u].splice(i, 1);
-            E_shape[u].splice(i,1);
-            break;
-        }
-    }
-
     for(i=0; i<degU; i++){
         if(E[v][i]==u){
             E[v].splice(i, 1);
@@ -75,4 +66,49 @@ var deleteEdge = function(u,v){
             break;
         }
     }
-}
+
+    for(i=0; i<degV; i++){
+        if(E[u][i]==v){
+            E[u].splice(i, 1);
+            E_shape[u].splice(i,1);
+            break;
+        }
+    }
+};
+
+var generateGraphFromXml = function(){
+    E = [];
+    E_shape = [];
+    vacantPositions = [];
+    V = [];
+    for(child of svg.children){
+        if(isNode(child)){
+            var id = parseInt(child.getAttribute('id'));
+            addVertex(id, child);
+            console.log(id);
+        }
+    }
+
+    for(child of svg.children){
+        if(isEdge(child.children[0])){
+            var u = parseInt(child.children[0].getAttribute('v1'));
+            var v = parseInt(child.children[0].getAttribute('v2'));
+            addEdge(u,v,child);
+        }
+    }
+
+    var max = 0;
+    for(i=0; i<V.length; i++){
+        if(V[i]==-1){
+            console.log(i);
+            vacantPositions.push(i);
+        }else{
+            if(max<i){
+                max = i;
+            }
+            console.log('max: '+i);
+        }
+    }
+    serialId = max+1;
+    console.log(serialId);
+};
