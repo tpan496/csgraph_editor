@@ -1,37 +1,54 @@
 var gridOn = true;
 var directedOn = true;
 
-var toggleGrid = function(target){
-    if(gridOn){
+var toggleGrid = function (target) {
+    if (gridOn) {
         target.css('background', '#7a7a7a');
         gridOn = false;
         $('#content').hide();
-    }else{
+    } else {
         target.css('background', 'rgb(6, 218, 94)');
         gridOn = true;
         $('#content').show();
     }
 };
 
-var toggleDirected = function(target){
-    if(directedOn){
+var toggleDirected = function (target) {
+    if (directedOn) {
         target.css('background', '#7a7a7a');
         directedOn = false;
 
-        for(v of E_shape){
-            for(e of v){
+        for (v of E_shape) {
+            for (e of v) {
                 console.log(e);
                 e.children[1].setAttribute('visibility', 'hidden');
             }
         }
-    }else{
+    } else {
         target.css('background', 'rgb(6, 218, 94)');
         directedOn = true;
 
-        for(v of E_shape){
-            for(e of v){
+        for (v of E_shape) {
+            for (e of v) {
                 e.children[1].setAttribute('visibility', 'visible');
             }
+        }
+    }
+};
+
+var exportPNG = function () {
+    var foreigns = [];
+    for(child of svg.children){
+        if(child.getAttribute('class') == 'label'){
+            var foreign = child.children[2];
+            child.removeChild(foreign);
+            foreigns.push(foreign);
+        }
+    }
+    saveSvgAsPng(svg, "diagram.png");
+    for(child of svg.children){
+        if(child.getAttribute('class') == 'label'){
+            child.appendChild(foreigns.shift());
         }
     }
 };

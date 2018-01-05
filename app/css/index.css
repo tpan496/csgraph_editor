@@ -1,7 +1,7 @@
 svg{
     width: 100%;
     height: 100vh;
-    background: none;
+    background: transparent;
     float: left;
     position: absolute;
     z-index: -1;

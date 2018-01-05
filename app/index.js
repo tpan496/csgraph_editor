@@ -79,6 +79,10 @@ $(document).ready(function () {
         displayInfo(label);
     });
 
+    $('#button-export').click(function () {
+        exportPNG();
+    });
+
     $('svg').click(function () {
         if (selectedElement != 0 && !mouseOverNode) {
             turnOffSelectedElementScaler();
@@ -144,6 +148,7 @@ var drawLabel = function (x, y) {
     var label = document.createElementNS(svgns, 'g');
     var text = drawText(x, y, '');
     text.setAttribute('font-size', 20);
+    text.setAttribute('editable', 'true');
     var markerRect = drawRect(x, y, 0, 0);
     var input = drawInputBox(x, y, 0, 0);
     input.setAttribute('visibility', 'hidden');
