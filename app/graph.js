@@ -83,7 +83,7 @@ var generateGraphFromXml = function(){
     V = [];
     for(child of svg.children){
         if(isNode(child)){
-            var id = parseInt(child.getAttribute('id'));
+            var id = child.getAttribute('id');
             addVertex(id, child);
             console.log(id);
         }
@@ -91,8 +91,8 @@ var generateGraphFromXml = function(){
 
     for(child of svg.children){
         if(isEdge(child.children[0])){
-            var u = parseInt(child.children[0].getAttribute('v1'));
-            var v = parseInt(child.children[0].getAttribute('v2'));
+            var u = child.children[0].getAttribute('v1');
+            var v = child.children[0].getAttribute('v2');
             addEdge(u,v,child);
         }
     }

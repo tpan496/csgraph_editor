@@ -355,7 +355,8 @@ var deselectLinker = function (e) {
     } else {
         var v1 = selectedLinker.parentElement.parentElement.getAttribute('id')
         var v2 = overNode.parentElement.getAttribute('id')
-        if (E[v1][v2]) {
+        console.log(E);
+        if (E[v1].indexOf(v2)>=0) {
             svg.removeChild(svg.lastChild);
             selectedLinker = 0;
             linkPointer = 0;
