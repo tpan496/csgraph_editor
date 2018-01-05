@@ -29,6 +29,7 @@ var fromInfo;
 var toInfo;
 var textInfo;
 var textSizeInfo;
+var guideInfo;
 var gridOnButton;
 var directedOnButton;
 
@@ -45,6 +46,7 @@ $(document).ready(function () {
     textSizeInfo = $('label#text-size');
     gridOnButton = $('#grid');
     directedOnButton = $('#directed');
+    guideInfo = $('#guide');
     displayBoard();
 
     $('#button-circle').click(function () {

@@ -1,3 +1,8 @@
+var paperString = "1. This editor is best suited for creating mathematical graphs.<br/> 2. Supports ctrl-c/ctrl-v operations on node and labels. <br/>3. Save your graph either as PNG or XML file for future edits."
+var nodeString = "Node object represents a vertex in the graph. Drag from the green center from the node to form an edge with another one.";
+var edgeString = "Edge object represents an edge in the graph. You can toggle on/off its arrrow from 'enable directed'.";
+var labelString = "Label object allows you to create text on the paper. Note that it cannot be conned via any means.";
+
 var displayInfo = function (node) {
     clearBoard();
     $('.clickedit').hide();
@@ -11,6 +16,7 @@ var displayInfo = function (node) {
         idInfo.parent().show();
         radiusInfo.html(node.children[0].getAttribute('radius'));
         radiusInfo.parent().show();
+        guideInfo.html(nodeString);
     } else if (node.getAttribute('class') == 'edge') {
         fromInfo.html(node.getAttribute('v1'));
         fromInfo.parent().show();
@@ -19,6 +25,7 @@ var displayInfo = function (node) {
         node.setAttribute('stroke-dasharray', [5, 5]);
         node.setAttribute('stroke', 'rgb(0,122,255)');
         node.parentElement.children[1].setAttribute('fill', 'rgb(0,122,255)');
+        guideInfo.html(edgeString);
     } else if (node.getAttribute('class') == 'label') {
         xInfo.html(node.getAttribute('position-x'));
         xInfo.parent().show();
@@ -28,6 +35,7 @@ var displayInfo = function (node) {
         textInfo.parent().show();
         textSizeInfo.html(node.children[0].getAttribute('font-size'));
         textSizeInfo.parent().show();
+        guideInfo.html(labelString);
         return;
     }
 
@@ -61,6 +69,7 @@ var displayBoard = function () {
     clearBoard();
     directedOnButton.show();
     gridOnButton.show();
+    guideInfo.html(paperString);
 };
 
 var clearBoard = function () {
