@@ -27,6 +27,8 @@ var fromInfo;
 var toInfo;
 var textInfo;
 var textSizeInfo;
+var gridOnButton;
+var directedOnButton;
 
 $(document).ready(function () {
     svg = $('svg')[0];
@@ -40,6 +42,8 @@ $(document).ready(function () {
     toInfo = $('label#to');
     textInfo = $('label#text');
     textSizeInfo = $('label#text-size');
+    gridOnButton = $('#grid');
+    directedOnButton = $('#directed');
     displayBoard();
 
     $('#button-circle').click(function () {
@@ -74,7 +78,8 @@ $(document).ready(function () {
         currentMatrix = getMatrix(selectedElement);
         displayInfo(label);
     });
-    $('#paper').click(function () {
+
+    $('svg').click(function () {
         if (selectedElement != 0 && !mouseOverNode) {
             turnOffSelectedElementScaler();
             console.log('turn off');
@@ -95,6 +100,14 @@ $(document).ready(function () {
 
         editing = true;
         currentEditTarget = $(this).next();
+    });
+
+    $('#grid').click(function () {
+        toggleGrid($(this));
+    });
+
+    $('#directed').click(function() {
+        toggleDirected($(this));
     });
 });
 
@@ -353,6 +366,9 @@ var deselectLinker = function (e) {
         var arrowHead = drawArrowHead(linkPointer);
         arrow.appendChild(linkPointer);
         arrow.appendChild(arrowHead);
+        if(!directedOn){
+            arrowHead.setAttribute('visibility', 'hidden');
+        }
 
         svg.insertBefore(arrow, svg.firstChild);
         addEdge(v1, v2, arrow);

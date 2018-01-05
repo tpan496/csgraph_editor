@@ -57,8 +57,10 @@ var displayXY = function(node) {
     }
 };
 var displayBoard = function () {
-    elementInfo.html('none');
+    elementInfo.html('paper');
     clearBoard();
+    directedOnButton.show();
+    gridOnButton.show();
 };
 
 var clearBoard = function () {
@@ -70,4 +72,6 @@ var clearBoard = function () {
     textSizeInfo.parent().hide();
     xInfo.parent().hide();
     yInfo.parent().hide();
+    directedOnButton.hide();
+    gridOnButton.hide();
 };
