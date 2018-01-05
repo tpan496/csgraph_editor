@@ -79,8 +79,16 @@ $(document).ready(function () {
         displayInfo(label);
     });
 
-    $('#button-export').click(function () {
+    $('#button-png').click(function () {
         exportPNG();
+    });
+
+    $('#button-xml').click(function () {
+        saveXML();
+    });
+
+    $('#button-load').click(function(){
+        loadXML();
     });
 
     $('svg').click(function () {
