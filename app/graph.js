@@ -1,6 +1,8 @@
 var svg;
 var V = [];
 var E = [];
+var E_in = [];
+var E_out = [];
 var vacantPositions = [];
 var E_shape = [];
 
@@ -13,9 +15,11 @@ var getReusableId = function () {
 };
 
 var addVertex = function (v, node) {
-    while(V.length <= v){
+    while (V.length <= v) {
         V.push(-1);
         E.push([]);
+        E_in.push([]);
+        E_out.push([]);
         E_shape.push([]);
     }
     V[v] = node;
@@ -26,7 +30,11 @@ var addEdge = function (u, v, line) {
     E[v].push(u);
     E_shape[u].push(line);
     E_shape[v].push(line);
+
+    E_out[u].push(v);
+    E_in[v].push(u);
     console.log([u, v]);
+    console.log(E_out);
 };
 
 var getEdges = function (v) {
@@ -39,12 +47,26 @@ var deleteVertex = function (v) {
     for (i = 0; i < degV; i++) {
         var u = E[v][i];
         var degU = E[u].length;
+        var outDegU = E_out[u].length;
+        var inDegU = E_in[u].length;
         for (j = 0; j < degU; j++) {
             if (E[u][j] == v) {
                 E[u].splice(j, 1);
                 E_shape[u].splice(j, 1);
-                console.log("delete "+v+" from "+u);
-                console.log(u+": "+E[u]);
+                console.log("delete " + v + " from " + u);
+                console.log(u + ": " + E[u]);
+                break;
+            }
+        }
+        for (j = 0; j < outDegU; j++) {
+            if (E_out[u][j] == v) {
+                E_out[u].splice(j, 1);
+                break;
+            }
+        }
+        for (j = 0; j < inDegU; j++) {
+            if (E_in[u][j] == v) {
+                E_in[u].splice(j, 1);
                 break;
             }
         }
@@ -52,63 +74,82 @@ var deleteVertex = function (v) {
     }
     E[v] = [];
     E_shape[v] = [];
+    E_out[v] = [];
+    E_in[v] = [];
     V[v] = 0;
     vacantPositions.push(v);
 };
 
-var deleteEdge = function(u,v){
+var deleteEdge = function (u, v) {
+    console.log(E_out);
     var degU = E[u].length;
     var degV = E[v].length;
-    for(i=0; i<degU; i++){
-        if(E[v][i]==u){
+    for (i = 0; i < degV; i++) {
+        if (E[v][i] == u) {
             E[v].splice(i, 1);
-            E_shape[v].splice(i,1);
+            E_shape[v].splice(i, 1);
             break;
         }
     }
 
-    for(i=0; i<degV; i++){
-        if(E[u][i]==v){
+    for (i = 0; i < degU; i++) {
+        if (E[u][i] == v) {
             E[u].splice(i, 1);
-            E_shape[u].splice(i,1);
+            E_shape[u].splice(i, 1);
             break;
         }
     }
+
+    var outDegU = E_out[u].length;
+    var inDegV = E_in[v].length;
+    for (i = 0; i < outDegU; i++) {
+        if (E_out[u][i] == v) {
+            E_out[u].splice(i, 1);
+            break;
+        }
+    }
+
+    for (i = 0; i < inDegV; i++) {
+        if (E_in[v][i] == u) {
+            E_in[v].splice(i, 1);
+            break;
+        }
+    }
+
+    console.log(E_out);
 };
 
-var generateGraphFromXml = function(){
+var generateGraphFromXml = function () {
     E = [];
+    E_out = [];
+    E_in = [];
     E_shape = [];
     vacantPositions = [];
     V = [];
-    for(child of svg.children){
-        if(isNode(child)){
+    for (child of svg.children) {
+        if (isNode(child)) {
             var id = child.getAttribute('id');
             addVertex(id, child);
-            console.log(id);
         }
     }
 
-    for(child of svg.children){
-        if(isEdge(child.children[0])){
+    for (child of svg.children) {
+        if (isEdge(child.children[0])) {
             var u = child.children[0].getAttribute('v1');
             var v = child.children[0].getAttribute('v2');
-            addEdge(u,v,child);
+            addEdge(u, v, child);
         }
     }
 
     var max = 0;
-    for(i=0; i<V.length; i++){
-        if(V[i]==-1){
-            console.log(i);
+    for (i = 0; i < V.length; i++) {
+        if (V[i] == -1) {
             vacantPositions.push(i);
-        }else{
-            if(max<i){
+        } else {
+            if (max < i) {
                 max = i;
             }
-            console.log('max: '+i);
         }
     }
-    serialId = max+1;
-    console.log(serialId);
+    serialId = max + 1;
 };

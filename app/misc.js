@@ -20,7 +20,6 @@ var toggleDirected = function (target) {
 
         for (v of E_shape) {
             for (e of v) {
-                console.log(e);
                 e.children[1].setAttribute('visibility', 'hidden');
             }
         }
@@ -105,7 +104,6 @@ var loadXML = function () {
             $('svg').click(function () {
                 if (selectedElement != 0 && !mouseOverNode) {
                     turnOffSelectedElementScaler();
-                    console.log('turn off');
                 }
             });
         };
