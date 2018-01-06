@@ -17,6 +17,12 @@ var displayInfo = function (node) {
         radiusInfo.html(node.children[0].getAttribute('radius'));
         radiusInfo.parent().show();
         guideInfo.html(nodeString);
+        selfLoopButton.show();
+        if(node.children[3].getAttribute('visibility') == 'hidden'){
+            selfLoopButton.css('background', '#7a7a7a');
+        }else{
+            selfLoopButton.css('background', 'rgb(6, 218, 94)');
+        }
     } else if (node.getAttribute('class') == 'edge') {
         fromInfo.html(node.getAttribute('v1'));
         fromInfo.parent().show();
@@ -83,4 +89,5 @@ var clearBoard = function () {
     yInfo.parent().hide();
     directedOnButton.hide();
     gridOnButton.hide();
+    selfLoopButton.hide();
 };

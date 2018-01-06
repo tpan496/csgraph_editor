@@ -336,4 +336,7 @@ var scaleTo = function (targetRadius) {
     eMatrix[3] = rate;
     lineE.setAttribute('transform', matrixToString(eMatrix));
     updateXY(lineE, dr, 0);
+
+    var loop = selectedElement.children[3];
+    updateHalfCircle(selectedElement, loop, parseInt(circle.getAttribute('position-x')), parseInt(circle.getAttribute('position-y')), selectedElement.children[0].getAttribute('radius'));
 };

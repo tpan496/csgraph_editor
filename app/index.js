@@ -33,6 +33,7 @@ var guideInfo;
 var gridOnButton;
 var directedOnButton;
 var clearButton;
+var selfLoopButton;
 
 $(document).ready(function () {
     svg = $('svg')[0];
@@ -48,6 +49,7 @@ $(document).ready(function () {
     gridOnButton = $('#grid');
     directedOnButton = $('#directed');
     guideInfo = $('#guide');
+    selfLoopButton = $('#self-loop');
     displayBoard();
 
     $('#button-circle').click(function () {
@@ -128,6 +130,10 @@ $(document).ready(function () {
 
     $('#directed').click(function () {
         toggleDirected($(this));
+    });
+
+    $('#self-loop').click(function(){
+        toggleSelfLoop($(this), selectedElement);
     });
 });
 
@@ -238,6 +244,8 @@ var drawNode = function (x, y) {
     var node = document.createElementNS(svgns, 'g');
     var circle = drawCircle(x, y, 20, 'white', 'black', 1.5);
     var mutator = drawMutator(x, y, 20);
+    var loop = drawHalfCircle(x,y, 20);
+    loop.setAttribute('visibility', 'hidden');
 
     var text;
     var recycledId = getReusableId();
@@ -255,6 +263,7 @@ var drawNode = function (x, y) {
     node.appendChild(circle);
     node.appendChild(text);
     node.appendChild(mutator);
+    node.appendChild(loop);
     node.setAttribute('transform', 'matrix(1 0 0 1 0 0)');
     node.setAttribute('onmousedown', 'selectElement(evt)');
     node.setAttribute('class', 'node');

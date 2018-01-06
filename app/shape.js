@@ -26,7 +26,7 @@ var drawRect = function (x, y, w, h) {
     rect.setAttributeNS(null, 'height', h);
     rect.setAttribute('stroke', 'rgb(0,122,255)');
     rect.setAttribute('fill', 'transparent');
-    rect.setAttribute('stroke-dasharray', [2,2]);
+    rect.setAttribute('stroke-dasharray', [2, 2]);
     rect.setAttribute('stroke-width', 2);
     return rect;
 };
@@ -112,26 +112,26 @@ var drawArrowHead = function (edge) {
     var gamma = Math.PI - theta - Math.PI / 3;
 
     var xLeft, yLeft, xRight, yRight;
-    if(x1<x2){
+    if (x1 < x2) {
         xLeft = x2 - a * Math.abs(Math.cos(theta));
-        if(gamma < Math.PI/2){
-            xRight = x2 + a*Math.abs(Math.cos(gamma));
-        }else{
+        if (gamma < Math.PI / 2) {
+            xRight = x2 + a * Math.abs(Math.cos(gamma));
+        } else {
             xRight = x2 - a * Math.abs(Math.cos(gamma));
         }
-    }else{
+    } else {
         xLeft = x2 + a * Math.abs(Math.cos(theta));
-        if(gamma < Math.PI/2){
-            xRight = x2 - a*Math.abs(Math.cos(gamma));
-        }else{
+        if (gamma < Math.PI / 2) {
+            xRight = x2 - a * Math.abs(Math.cos(gamma));
+        } else {
             xRight = x2 + a * Math.abs(Math.cos(gamma));
         }
     }
 
-    if(y1<y2){
+    if (y1 < y2) {
         yLeft = y2 - a * Math.sin(theta);
         yRight = y2 - a * Math.sin(gamma);
-    }else{
+    } else {
         yLeft = y2 + a * Math.sin(theta);
         yRight = y2 + a * Math.sin(gamma);
     }
@@ -156,7 +156,7 @@ var drawArrowHead = function (edge) {
     return polygon;
 };
 
-var drawInputBox = function(x,y,w,h){
+var drawInputBox = function (x, y, w, h) {
     var foreign = document.createElementNS(svgns, 'foreignObject');
     foreign.setAttribute('x', x);
     foreign.setAttribute('y', y);
@@ -174,3 +174,77 @@ var drawInputBox = function(x,y,w,h){
     foreign.appendChild(input);
     return foreign;
 };
+
+var drawHalfCircle = function (x, y, r) {
+    var g = document.createElementNS(svgns, 'g');
+    var path = document.createElementNS(svgns, 'path');
+    var R = r;
+    var r = 15;
+    if(R<15){
+        r = R*0.8;
+    }
+    var xx = x;
+    var yy = y - (Math.sqrt(R*R-r*r/8)+r/Math.sqrt(2));
+    path.setAttribute('d', describeArc(xx,yy,r,-135,135));
+    path.setAttribute('fill', 'none');
+    path.setAttribute('stroke-width', 1.5);
+    path.setAttribute('stroke', 'black');
+
+    var polygon = document.createElementNS(svgns, "polygon");
+    var x = xx - r*8/15, y = yy - r*2/15;
+    var theta = Math.PI / 6;
+    var gamma = Math.PI - Math.PI / 6 - Math.PI / 3;
+    var xLeft = x - 15 * Math.cos(theta),
+        yLeft = y + 15 * Math.sin(theta),
+        xRight = x + 15 * Math.cos(gamma),
+        yRight = y + 15 * Math.sin(gamma);
+
+    var array = arr = [[xLeft, yLeft],
+    [xRight, yRight],
+    [x, y]];
+
+    for (value of array) {
+        var point = svg.createSVGPoint();
+        point.x = value[0];
+        point.y = value[1];
+        polygon.points.appendItem(point);
+    }
+
+    polygon.setAttribute('class', 'arrow-head');
+    polygon.setAttribute('transform-origin', 'center');
+    polygon.setAttribute('fill', 'black');
+
+    g.appendChild(path);
+    g.appendChild(polygon);
+    return g;
+};
+
+var updateHalfCircle = function (node, loop, x, y, r) {
+    var g = drawHalfCircle(x, y, r);
+    node.removeChild(loop);
+    node.appendChild(g);
+};
+
+var polarToCartesian = function(centerX, centerY, radius, angleInDegrees) {
+    var angleInRadians = (angleInDegrees - 90) * Math.PI / 180.0;
+
+    return {
+        x: centerX + (radius * Math.cos(angleInRadians)),
+        y: centerY + (radius * Math.sin(angleInRadians))
+    };
+}
+
+var describeArc = function(x, y, radius, startAngle, endAngle) {
+
+    var start = polarToCartesian(x, y, radius, endAngle);
+    var end = polarToCartesian(x, y, radius, startAngle);
+
+    var largeArcFlag = endAngle - startAngle <= 180 ? "0" : "1";
+
+    var d = [
+        "M", start.x, start.y,
+        "A", radius, radius, 0, largeArcFlag, 0, end.x, end.y
+    ].join(" ");
+
+    return d;
+}
