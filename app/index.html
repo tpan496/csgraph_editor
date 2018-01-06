@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Graph app</title>
+    <title>CS Graph Editor</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" type="text/css" media="screen" href="css/index.css" />
     <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
@@ -16,6 +16,7 @@
     <script src="index.js"></script>
     <script src="scale.js"></script>
     <script src="misc.js"></script>
+    <link rel="shortcut icon" type="image/x-icon" href="favicon.ico" />
 </head>
 <body>
     <div id="tool">
@@ -31,7 +32,10 @@
     
     <div id="info">
         <div class="info" id="element" style="text-align: center">none</div>
-        <div class="info-button" id="self-loop">self-loop</div>
+        <div class="info-node-buttons">
+            <div class="info-node-button" id="self-loop">self-loop</div>
+            <div class="info-node-button" id="terminal">terminal</div>
+        </div>
         <div class="info-button" id="grid">enable grid</div>
         <div class="info-button" id="directed">enable directed</div>
         <div class="info">id: <label id="id">?</div>

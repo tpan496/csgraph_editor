@@ -18,10 +18,16 @@ var displayInfo = function (node) {
         radiusInfo.parent().show();
         guideInfo.html(nodeString);
         selfLoopButton.show();
+        terminalButton.show();
         if(node.children[3].getAttribute('visibility') == 'hidden'){
             selfLoopButton.css('background', '#7a7a7a');
         }else{
             selfLoopButton.css('background', 'rgb(6, 218, 94)');
+        }
+        if(node.children[4].getAttribute('visibility') == 'hidden'){
+            terminalButton.css('background', '#7a7a7a');
+        }else{
+            terminalButton.css('background', 'rgb(6, 218, 94)');
         }
     } else if (node.getAttribute('class') == 'edge') {
         fromInfo.html(node.getAttribute('v1'));
@@ -90,4 +96,5 @@ var clearBoard = function () {
     directedOnButton.hide();
     gridOnButton.hide();
     selfLoopButton.hide();
+    terminalButton.hide();
 };

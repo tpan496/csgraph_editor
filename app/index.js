@@ -34,6 +34,7 @@ var gridOnButton;
 var directedOnButton;
 var clearButton;
 var selfLoopButton;
+var terminalButton;
 
 $(document).ready(function () {
     svg = $('svg')[0];
@@ -50,6 +51,7 @@ $(document).ready(function () {
     directedOnButton = $('#directed');
     guideInfo = $('#guide');
     selfLoopButton = $('#self-loop');
+    terminalButton = $('#terminal');
     displayBoard();
 
     $('#button-circle').click(function () {
@@ -134,6 +136,10 @@ $(document).ready(function () {
 
     $('#self-loop').click(function(){
         toggleSelfLoop($(this), selectedElement);
+    });
+
+    $('#terminal').click(function(){
+        toggleTerminal($(this), selectedElement);
     });
 });
 
@@ -246,6 +252,8 @@ var drawNode = function (x, y) {
     var mutator = drawMutator(x, y, 20);
     var loop = drawHalfCircle(x,y, 20);
     loop.setAttribute('visibility', 'hidden');
+    var terminal = drawCircle(x, y, 15, 'transparent', 'black', 1.5);
+    terminal.setAttribute('visibility', 'hidden');
 
     var text;
     var recycledId = getReusableId();
@@ -264,6 +272,7 @@ var drawNode = function (x, y) {
     node.appendChild(text);
     node.appendChild(mutator);
     node.appendChild(loop);
+    node.appendChild(terminal);
     node.setAttribute('transform', 'matrix(1 0 0 1 0 0)');
     node.setAttribute('onmousedown', 'selectElement(evt)');
     node.setAttribute('class', 'node');

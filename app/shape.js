@@ -221,8 +221,11 @@ var drawHalfCircle = function (x, y, r) {
 
 var updateHalfCircle = function (node, loop, x, y, r) {
     var g = drawHalfCircle(x, y, r);
+    var terminal = node.children[4];
+    node.removeChild(terminal);
     node.removeChild(loop);
     node.appendChild(g);
+    node.appendChild(terminal);
 };
 
 var polarToCartesian = function(centerX, centerY, radius, angleInDegrees) {

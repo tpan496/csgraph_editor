@@ -95,6 +95,33 @@ svg{
     user-select: none;
 }
 
+.info-node-buttons{
+    width: 100%;
+    margin: 10px;
+}
+.info-node-button{
+    display: inline-flex;
+    -webkit-text-fill-color: white;
+    height: 25px;
+    width: 31.5%;
+    text-align: center;
+    padding: 5px;
+    padding-top: 15px;
+    padding-left: 20px;
+    border-radius: 5px;
+    background: rgb(6, 218, 94);
+    font-family: 'Helvetica';
+    font-size: 13px;
+    position: relative;
+    pointer-events: all;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
 .info-button:hover{
     background: rgb(6, 218, 94);
 }

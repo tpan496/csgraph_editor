@@ -125,3 +125,13 @@ var toggleSelfLoop = function(target, e){
         target.css('background', '#7a7a7a');
     }
 };
+
+var toggleTerminal = function(target, e){
+    if(e.children[4].getAttribute('visibility') == 'hidden'){
+        e.children[4].setAttribute('visibility', 'visible');
+        target.css('background', 'rgb(6, 218, 94)');
+    }else{
+        e.children[4].setAttribute('visibility', 'hidden');
+        target.css('background', '#7a7a7a');
+    }
+};
