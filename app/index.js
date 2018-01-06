@@ -32,6 +32,7 @@ var textSizeInfo;
 var guideInfo;
 var gridOnButton;
 var directedOnButton;
+var clearButton;
 
 $(document).ready(function () {
     svg = $('svg')[0];
@@ -50,10 +51,10 @@ $(document).ready(function () {
     displayBoard();
 
     $('#button-circle').click(function () {
-        var rx = randomRange(0, 20);
-        var ry = randomRange(0, 20);
-        var x = svg.getBoundingClientRect().width / 2 + rx;
-        var y = svg.getBoundingClientRect().height / 2 + ry;
+        var rx = parseInt(randomRange(0, 20));
+        var ry = parseInt(randomRange(0, 20));
+        var x = parseInt(svg.getBoundingClientRect().width / 2) + rx;
+        var y = parseInt(svg.getBoundingClientRect().height / 2) + ry;
         var node = drawNode(x, y);
         svg.appendChild(node);
         if (selectedElement != 0) {
@@ -66,10 +67,10 @@ $(document).ready(function () {
     });
 
     $('#button-label').click(function () {
-        var rx = randomRange(0, 20);
-        var ry = randomRange(0, 20);
-        var x = svg.getBoundingClientRect().width / 2 + rx;
-        var y = svg.getBoundingClientRect().height / 2 + ry;
+        var rx = parseInt(randomRange(0, 20));
+        var ry = parseInt(randomRange(0, 20));
+        var x = parseInt(svg.getBoundingClientRect().width / 2) + rx;
+        var y = parseInt(svg.getBoundingClientRect().height / 2) + ry;
         var label = drawLabel(x, y);
         svg.appendChild(label);
         updateRect(label);
@@ -92,6 +93,11 @@ $(document).ready(function () {
 
     $('#button-load').click(function () {
         loadXML();
+    });
+
+    $('#button-clear').click(function (){
+        $('svg').html('');
+        serialId = 0;
     });
 
     $('svg').click(function () {
@@ -677,13 +683,23 @@ function endEdit(e) {
         label.text(input.val() === '' ? label.textContent : input.val());
         input.hide();
         label.show();
+        var val = input.val() === '' ? '' : input.val();
 
         var id = label.attr('id');
         if (id == 'radius') {
             scaleTo(parseFloat(input.val()));
+            var id = selectedElement.getAttribute('id');
+            var edges = getEdges(id);
+            var l = edges.length;
+            for (i = 0; i < l; i++) {
+                var edge = edges[i];
+                var v1 = edge.children[0].getAttribute('v1');
+                var v2 = edge.children[0].getAttribute('v2');
+                reshapeEdge(edge.children[0], edge.children[1], V[v1], V[v2]);
+            }
         } else if (id == 'text') {
             if (isNode(selectedElement)) {
-                selectedElement.children[1].textContent = input.val();
+                selectedElement.children[1].textContent = val;
             } else if (selectedElement.getAttribute('class') == 'label') {
                 selectedElement.children[0].textContent = input.val();
                 var bbox = selectedElement.children[0].getBBox();
@@ -758,7 +774,7 @@ function endEdit(e) {
                 updateRect(selectedElement);
             }
         }
-        input.val('');
+        input.val(' ');
     }
     editing = false;
 };
@@ -828,4 +844,3 @@ var pasteSelectedElement = function () {
 $(document).bind('copy', function () { copySelectedElement(); });
 $(document).bind('paste', function () { pasteSelectedElement(); });
 $(document).bind('keydown.meta_s', function () { alert('save'); });
-

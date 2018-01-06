@@ -133,11 +133,17 @@ var generateGraphFromXml = function () {
         }
     }
 
+    var isDirected = true;
+    var findEdge = false;
     for (child of svg.children) {
         if (isEdge(child.children[0])) {
             var u = child.children[0].getAttribute('v1');
             var v = child.children[0].getAttribute('v2');
             addEdge(u, v, child);
+            if(!findEdge && child.children[1].getAttribute('visibility') == 'hidden'){
+                isDirected = false;
+            }
+            findEdge = true;
         }
     }
 
@@ -152,4 +158,14 @@ var generateGraphFromXml = function () {
         }
     }
     serialId = max + 1;
+
+    if(isDirected){
+        if(!directedOn){
+            toggleDirected($('#directed'));
+        }
+    }else{
+        if(directedOn){
+            toggleDirected($('#directed'));
+        }
+    }
 };

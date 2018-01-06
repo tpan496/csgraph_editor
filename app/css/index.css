@@ -129,7 +129,8 @@ label{
     position: absolute;
     right: 10px;
     max-width: 80px;
-    min-width: 10px;
+    min-width: 30px;
+    min-height: 15px;
     text-overflow: ellipsis;
     overflow: hidden;
     display: inline-block;
@@ -158,7 +159,6 @@ label:hover{
     right: 6px;
     bottom: 2px;
     font-size: 12px;
-    appearance: none;
 }
 
 button:focus {outline:0;}
