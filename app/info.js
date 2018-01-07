@@ -1,7 +1,7 @@
 var paperString = "1. This editor is best suited for creating mathematical graphs.<br/> 2. Supports ctrl-c/ctrl-v operations on node and labels. <br/>3. Save your graph either as PNG or XML file for future edits."
 var nodeString = "Node object represents a vertex in the graph. Drag from the green center from the node to form an edge with another one.";
 var edgeString = "Edge object represents an edge in the graph. You can toggle on/off its arrrow from 'enable directed'.";
-var labelString = "Label object allows you to create text on the paper. Note that it cannot be conned via any means.";
+var labelString = "Label object allows you to create text on the paper. Note that it cannot be connected via any means.";
 
 var displayInfo = function (node) {
     clearBoard();
