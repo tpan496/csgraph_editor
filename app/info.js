@@ -7,7 +7,7 @@ var displayInfo = function (node) {
     clearBoard();
     $('.clickedit').hide();
     elementInfo.html(node.getAttribute('class'));
-    if (node.getAttribute('class') == 'node') {
+    if (isNode(node)) {
         xInfo.html(node.getAttribute('position-x'));
         xInfo.parent().show();
         yInfo.html(node.getAttribute('position-y'));
@@ -29,7 +29,7 @@ var displayInfo = function (node) {
         }else{
             terminalButton.css('background', 'rgb(6, 218, 94)');
         }
-    } else if (node.getAttribute('class') == 'edge') {
+    } else if (isEdge(node)) {
         fromInfo.html(node.getAttribute('v1'));
         fromInfo.parent().show();
         toInfo.html(node.getAttribute('v2'));
@@ -38,7 +38,7 @@ var displayInfo = function (node) {
         node.setAttribute('stroke', 'rgb(0,122,255)');
         node.parentElement.children[1].setAttribute('fill', 'rgb(0,122,255)');
         guideInfo.html(edgeString);
-    } else if (node.getAttribute('class') == 'label') {
+    } else if (isLabel(node)) {
         xInfo.html(node.getAttribute('position-x'));
         xInfo.parent().show();
         yInfo.html(node.getAttribute('position-y'));
@@ -62,14 +62,14 @@ var displayInfo = function (node) {
 };
 
 var displayXY = function(node) {
-    if (node.getAttribute('class') == 'node') {
+    if (isNode(node)) {
         xInfo.html(node.getAttribute('position-x'));
         xInfo.parent().show();
         yInfo.html(node.getAttribute('position-y'));
         yInfo.parent().show();
-    } else if (node.getAttribute('class') == 'edge') {
+    } else if (isEdge(node)) {
 
-    } else if (node.getAttribute('class') == 'label') {
+    } else if (isLabel(node)) {
         xInfo.html(node.getAttribute('position-x'));
         xInfo.parent().show();
         yInfo.html(node.getAttribute('position-y'));
