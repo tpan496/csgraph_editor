@@ -1,3 +1,13 @@
+/**
+ * Contains two scripts that deal with object
+ * scaling.
+ */
+
+/**
+ * Deals with node scaling by scaler node.
+ * @param {horizontal mouse movement distance} dx 
+ * @param {vertical mouse movement distance} dy 
+ */
 var scale = function (dx, dy) {
     if (!isNode(selectedElement)) {
         return;
@@ -314,6 +324,11 @@ var scale = function (dx, dy) {
     radiusInfo.html(getRadius(circle));
 };
 
+/**
+ * Deals with scaling to a specific radius with the
+ * position untouched.
+ * @param {new radius} targetRadius 
+ */
 var scaleTo = function (targetRadius) {
     if (!isNode(selectedElement)) {
         return;

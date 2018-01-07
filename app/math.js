@@ -1,7 +1,22 @@
+/**
+ * Script that covers mathematical operations.
+ */
+
+/**
+ * Returns a random number in [min,max]
+ * @param {minimum} min 
+ * @param {maximum} max 
+ */
 var randomRange = function (min, max) {
     return Math.random() * (max - min) + min;
 };
 
+/**
+ * Returns the distance between a and b, but
+ * only in terms of horizontal one
+ * @param {point a} a 
+ * @param {point b} b 
+ */
 var dist = function (a, b) {
     var dx = a[0] - b[0];
     var dy = a[1] - b[1];
@@ -12,12 +27,21 @@ var dist = function (a, b) {
     return Math.sqrt(dx * dx + dx * dx) * mult;
 };
 
+/**
+ * Returns the distance between a and b
+ * @param {point a} a 
+ * @param {point b} b 
+ */
 var dist2 = function (a, b) {
     var dx = a[0] - b[0];
     var dy = a[1] - b[1];
     return Math.sqrt(dx * dx + dy * dy);
 };
 
+/**
+ * Returns the transformation matrix of object
+ * @param {object} x 
+ */
 var getMatrix = function (x) {
     var matrix = x.getAttribute("transform").slice(7, -1).split(' ');
     for (var i = 0; i < 6; i++) {
@@ -26,14 +50,28 @@ var getMatrix = function (x) {
     return matrix;
 };
 
+/**
+ * Turns the matrix into a string
+ * @param {matrix} m 
+ */
 var matrixToString = function (m) {
     return "matrix(" + m.join(' ') + ")";
 };
 
+/**
+ * Returns the length of a vector
+ * @param {2d vector} v 
+ */
 var absoluteLength = function (v) {
     return Math.sqrt(v[0] * v[0] + v[1] * v[1]);
 };
 
+/**
+ * Updates x,y position of object
+ * @param {object} x 
+ * @param {horizontal shift} dx 
+ * @param {vertical shift} dy 
+ */
 var updateXY = function (x, dx, dy) {
     var prevX = getX(x);
     var prevY = getY(x);
@@ -41,39 +79,75 @@ var updateXY = function (x, dx, dy) {
     x.setAttribute("position-y", prevY + dy);
 };
 
+/**
+ * Updates radius of object
+ * @param {object} x 
+ * @param {horizontal shift} dx 
+ */
 var updateRadius = function (x, dx) {
     var r = getRadius(x);
     x.setAttribute("radius", r + dx);
 };
 
+/**
+ * Returns x position of object
+ * @param {object} x 
+ */
 var getX = function (x) {
     return parseFloat(x.getAttribute("position-x"));
 };
 
+/**
+ * Returns y position of object
+ * @param {object} x 
+ */
 var getY = function (x) {
     return parseFloat(x.getAttribute("position-y"));
 };
 
+/**
+ * Returns the absolute x position of object
+ * @param {object} x 
+ */
 var getAbsoluteX = function (x) {
     var currentX = getX(x);
     var originX = parseFloat(x.getAttribute("origin-x"));
     return currentX - originX;
 };
 
+/**
+ * Returns the absolute y position of object
+ * @param {object} x 
+ */
 var getAbsoluteY = function (x) {
     var currentY = getY(x);
     var originY = parseFloat(x.getAttribute("origin-y"));
     return currentY - originY;
 };
 
+/**
+ * Returns the current radius of object
+ * @param {object} x 
+ */
 var getRadius = function (x) {
     return parseFloat(x.getAttribute("radius"));
 };
 
+/**
+ * Returns the original radius of object
+ * @param {object} x 
+ */
 var getBaseRadius = function (x) {
     return parseFloat(x.getAttribute("r"));
 };
 
+/**
+ * Re-position an edge accroding to two nodes
+ * @param {edge} edge 
+ * @param {arrow head} head 
+ * @param {out node} node1 
+ * @param {in node} node2 
+ */
 var reshapeEdge = function (edge, head, node1, node2) {
     var r1x = getX(node1);
     var r1y = getY(node1);
@@ -157,6 +231,11 @@ var reshapeEdge = function (edge, head, node1, node2) {
     }
 };
 
+/**
+ * Reposition all the edges related to the
+ * object node
+ * @param {object node} x 
+ */
 var reshapeEdges = function (x) {
     var id = x.getAttribute('id');
     var edges = getEdges(id);

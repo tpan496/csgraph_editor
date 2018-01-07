@@ -1,6 +1,15 @@
+/**
+ * Script that deals with button events in the right-hand-side
+ * info panels and a few button events on the left(export, load).
+ */
+
 var gridOn = true;
 var directedOn = true;
 
+/**
+ * Toggles on/off of grid.
+ * @param {mouse event} target 
+ */
 var toggleGrid = function (target) {
     if (gridOn) {
         target.css('background', '#7a7a7a');
@@ -13,6 +22,10 @@ var toggleGrid = function (target) {
     }
 };
 
+/**
+ * Toggles on/off of direction of graph.
+ * @param {mouse event} target 
+ */
 var toggleDirected = function (target) {
     if (directedOn) {
         target.css('background', '#7a7a7a');
@@ -35,6 +48,9 @@ var toggleDirected = function (target) {
     }
 };
 
+/**
+ * Export PNG
+ */
 var exportPNG = function () {
     var foreigns = [];
     for (child of svg.children) {
@@ -52,13 +68,16 @@ var exportPNG = function () {
     }
 };
 
+/**
+ * Save as XML
+ */
 var saveXML = function () {
     turnOffSelectedElementScaler();
-    //get svg source.
+    // Get svg source.
     var serializer = new XMLSerializer();
     var source = serializer.serializeToString(svg);
 
-    //add name spaces.
+    // Add name spaces.
     if (!source.match(/^<svg[^>]+xmlns="http\:\/\/www\.w3\.org\/2000\/svg"/)) {
         source = source.replace(/^<svg/, '<svg xmlns="http://www.w3.org/2000/svg"');
     }
@@ -66,10 +85,10 @@ var saveXML = function () {
         source = source.replace(/^<svg/, '<svg xmlns:xlink="http://www.w3.org/1999/xlink"');
     }
 
-    //add xml declaration
+    // Add xml declaration
     source = '<?xml version="1.0" standalone="no"?>\r\n' + source;
 
-    //convert svg source to URI data scheme.
+    // Convert svg source to URI data scheme.
     var url = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(source);
 
     var a = document.createElement('a');
@@ -78,6 +97,9 @@ var saveXML = function () {
     a.click();
 };
 
+/**
+ * Load XML from external source
+ */
 var loadXML = function () {
     var input = document.createElement('input');
     input.type = 'file';
@@ -116,6 +138,11 @@ var loadXML = function () {
     }
 };
 
+/**
+ * Toggle on/off self-loop indicator for a node
+ * @param {button} target 
+ * @param {node object} e 
+ */
 var toggleSelfLoop = function(target, e){
     if(e.children[3].getAttribute('visibility') == 'hidden'){
         e.children[3].setAttribute('visibility', 'visible');
@@ -126,6 +153,11 @@ var toggleSelfLoop = function(target, e){
     }
 };
 
+/**
+ * Toggle on/off terminal indicator for a node
+ * @param {button} target 
+ * @param {node object} e 
+ */
 var toggleTerminal = function(target, e){
     if(e.children[4].getAttribute('visibility') == 'hidden'){
         e.children[4].setAttribute('visibility', 'visible');
