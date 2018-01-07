@@ -62,7 +62,7 @@ $(document).ready(function () {
         var node = drawNode(x, y);
         svg.appendChild(node);
         if (selectedElement != 0) {
-            turnOffSelectedElementScaler();
+            turnOffSelectedElementIndicators();
         }
         selectedElement = node;
         selectedElement.children[1].setAttribute('fill', 'rgb(175,175,175)');
@@ -80,7 +80,7 @@ $(document).ready(function () {
         updateLabel(label);
         label.children[1].setAttribute('stroke', 'rgb(0,122,255)');
         if (selectedElement != 0) {
-            turnOffSelectedElementScaler();
+            turnOffSelectedElementIndicators();
         }
         selectedElement = label;
         currentMatrix = getMatrix(selectedElement);
@@ -106,13 +106,13 @@ $(document).ready(function () {
 
     $('svg').click(function () {
         if (selectedElement != 0 && !mouseOverNode) {
-            turnOffSelectedElementScaler();
+            turnOffSelectedElementIndicators();
         }
     });
 
-    $('.clickedit').focusout(endEdit).keyup(function (e) {
+    $('.clickedit').focusout(endInfoEdit).keyup(function (e) {
         if ((e.which && e.which == 13) || (e.keyCode && e.keyCode == 13)) {
-            endEdit(e);
+            endInfoEdit(e);
             return false;
         } else {
             return true;
@@ -143,7 +143,7 @@ $(document).ready(function () {
     });
 });
 
-var turnOffSelectedElementScaler = function () {
+var turnOffSelectedElementIndicators = function () {
     if (selectedElement != 0 && (isNode(selectedElement) || isEdge(selectedElement) || isLabel(selectedElement))) {
         var scaler = selectedElement.children[2];
         if (scaler) {
@@ -164,7 +164,7 @@ var turnOffSelectedElementScaler = function () {
         if (isLabel(selectedElement)) {
             selectedElement.children[1].setAttribute('stroke', 'transparent');
             if (editing) {
-                editLabelEnd();
+                endLabelEdit();
             }
         }
         selectedElement = 0;
@@ -183,7 +183,7 @@ var editLabel = function (evt) {
     }
 };
 
-var editLabelEnd = function () {
+var endLabelEdit = function () {
     if (isLabel(selectedElement)) {
         editing = false;
         if (selectedEditBox.children[0].value === '') {
@@ -232,9 +232,7 @@ var selectLinker = function (e) {
     linkPointer = drawLine(getX(selectedLinker.parentElement.parentElement), getY(selectedLinker.parentElement.parentElement), currentX, currentY, 3, 'red');
     svg.appendChild(linkPointer);
 
-    svg.removeAttribute("onmousemove");
-    svg.removeAttribute("onmouseup");
-    svg.removeAttribute("onmouseout");
+    clearSVGEvents();
     svg.setAttribute('onmousemove', 'moveLinker(evt)');
     svg.setAttribute('onmouseup', 'deselectLinker(evt)');
 };
@@ -265,9 +263,7 @@ var deselectLinker = function (e) {
             svg.removeChild(svg.lastChild);
             selectedLinker = 0;
             linkPointer = 0;
-            svg.removeAttribute('onmouseup');
-            svg.removeAttribute('onmousedown');
-            svg.removeAttribute("onmousemove");
+            clearSVGEvents();
             return;
         }
         var arrow = document.createElementNS(svgns, 'g');
@@ -292,29 +288,17 @@ var deselectLinker = function (e) {
     }
     selectedLinker = 0;
     linkPointer = 0;
-    svg.removeAttribute('onmouseup');
-    svg.removeAttribute('onmousedown');
-    svg.removeAttribute("onmousemove");
+    clearSVGEvents();
 };
 
 var selectEdge = function (e) {
     e.preventDefault();
-    if (editing) {
-        editing = false;
-        if (currentEditTarget) {
-            currentEditTarget.hide();
-            currentEditTarget.prev().show();
-            currentEditTarget = 0;
-        }
-        if (isLabel(selectedElement) && selectedEditBox) {
-            editLabelEnd();
-        }
-    }
+    clearEdit();
 
     if (e.target.getAttribute('class') != 'edge') {
         return;
     }
-    turnOffSelectedElementScaler();
+    turnOffSelectedElementIndicators();
     selectedElement = e.target;
     displayInfo(selectedElement);
 };
@@ -333,9 +317,7 @@ var selectScaler = function (e) {
         var par = parseFloat(currentMatrix[i]);
         currentMatrix[i] = par;
     }
-    svg.removeAttribute("onmousemove");
-    svg.removeAttribute("onmouseup");
-    svg.removeAttribute("onmouseout");
+    clearSVGEvents();
     svg.setAttribute('onmousemove', 'moveScaler(evt)');
     svg.setAttribute('onmouseup', 'deselectElement(evt)');
 };
@@ -387,23 +369,13 @@ var moveScaler = function (e) {
 
 var selectLabel = function (e) {
     e.preventDefault();
-    if (editing) {
-        editing = false;
-        if (currentEditTarget) {
-            currentEditTarget.hide();
-            currentEditTarget.prev().show();
-            currentEditTarget = 0;
-        }
-        if (isLabel(selectedElement) && selectedEditBox) {
-            editLabelEnd();
-        }
-    }
+    clearEdit();
 
     if (e.target.parentElement.getAttribute("class") != "label") {
         return;
     }
     if (selectedElement != e.target.parentElement) {
-        turnOffSelectedElementScaler();
+        turnOffSelectedElementIndicators();
     }
     selectedElement = e.target.parentElement;
     displayInfo(selectedElement);
@@ -419,22 +391,13 @@ var selectLabel = function (e) {
 
 var selectElement = function (e) {
     e.preventDefault();
-    if (editing) {
-        editing = false;
-        if (currentEditTarget) {
-            currentEditTarget.hide();
-            currentEditTarget.prev().show();
-            currentEditTarget = 0;
-        }
-        if (isLabel(selectedElement) && selectedEditBox) {
-            editLabelEnd();
-        }
-    }
+    clearEdit();
+
     if (e.target.parentElement.getAttribute("class") != "node") {
         return;
     }
     if (selectedElement != e.target.parentElement) {
-        turnOffSelectedElementScaler();
+        turnOffSelectedElementIndicators();
     }
     selectedElement = e.target.parentElement;
     displayInfo(selectedElement);
@@ -479,8 +442,7 @@ var moveElement = function (e) {
 
 var deselectElement = function (evt) {
     evt.preventDefault();
-    svg.removeAttribute("onmousemove");
-    svg.removeAttribute("onmouseup");
+    clearSVGEvents();
     selectedScaler = 0;
 
     if (isNode(selectedElement)) {
@@ -526,7 +488,7 @@ $('html').keyup(function (e) {
 $('html').keyup(function (e) {
     if (e.keyCode == 13) {
         if (isLabel(selectedElement) && editing) {
-            editLabelEnd();
+            endLabelEdit();
         }
     }
 });
@@ -539,7 +501,7 @@ $('html').keydown(function (e) {
 });
 
 // edit ends
-function endEdit(e) {
+var endInfoEdit = function(e) {
     // change selected element shape according to text
     if (editing) {
         var input = $(e.target),
@@ -628,7 +590,6 @@ function endEdit(e) {
 };
 
 var copySelectedElement = function () {
-    console.log('s');
     if (selectedElement != 0) {
         if (isLabel(selectedElement) || isNode(selectedElement)) {
             copiedElement = selectedElement;
@@ -639,8 +600,8 @@ var copySelectedElement = function () {
 
 var pasteSelectedElement = function () {
     if (copiedElement != 0) {
+        console.log('pasted');
         if (isNode(copiedElement)) {
-            console.log('pasted');
             var rx = randomRange(0, 20);
             var ry = randomRange(0, 20);
             var x = getX(copiedElement) + rx;
@@ -648,10 +609,10 @@ var pasteSelectedElement = function () {
             var node = drawNode(x, y);
             svg.appendChild(node);
             if (selectedElement != 0) {
-                turnOffSelectedElementScaler();
+                turnOffSelectedElementIndicators();
             }
             selectedElement = node;
-            scaleTo(copiedElement.children[0].getAttribute('radius'));
+            scaleTo(getRadius(copiedElement.children[0]));
             node.children[1].textContent = copiedElement.children[1].textContent;
             selectedElement.children[1].setAttribute('fill', 'rgb(175,175,175)');
             currentMatrix = getMatrix(selectedElement);
@@ -666,7 +627,7 @@ var pasteSelectedElement = function () {
             label.children[0].setAttribute('font-size', copiedElement.children[0].getAttribute('font-size'));
             label.children[1].setAttribute('stroke', 'rgb(0,122,255)');
             if (selectedElement != 0) {
-                turnOffSelectedElementScaler();
+                turnOffSelectedElementIndicators();
             }
             selectedElement = label;
             label.children[0].textContent = copiedElement.children[0].textContent;
@@ -684,6 +645,26 @@ var pasteSelectedElement = function () {
             updateLabel(label);
             currentMatrix = getMatrix(selectedElement);
             displayInfo(label);
+        }
+    }
+};
+
+var clearSVGEvents = function(){
+    svg.removeAttribute("onmousemove");
+    svg.removeAttribute("onmouseup");
+    svg.removeAttribute("onmouseout");
+};
+
+var clearEdit = function(){
+    if (editing) {
+        editing = false;
+        if (currentEditTarget) {
+            currentEditTarget.hide();
+            currentEditTarget.prev().show();
+            currentEditTarget = 0;
+        }
+        if (isLabel(selectedElement) && selectedEditBox) {
+            endLabelEdit();
         }
     }
 };

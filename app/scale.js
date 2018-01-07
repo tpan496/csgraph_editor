@@ -2,7 +2,7 @@ var scale = function (dx, dy) {
     if (!isNode(selectedElement)) {
         return;
     }
-    var radius = selectedElement.getAttribute('radius');
+    var radius = getRadius(selectedElement);
     var diff = Math.sqrt(dx * dx + dy * dy);
 
     var mutator = selectedElement.children[2];
@@ -62,7 +62,7 @@ var scale = function (dx, dy) {
 
         // change loop and terminal
         var loop = selectedElement.children[3];
-        updateHalfCircle(selectedElement, loop, getX(circle), getY(circle), selectedElement.children[0].getAttribute('radius'));
+        updateHalfCircle(selectedElement, loop, getX(circle), getY(circle), getRadius(selectedElement.children[0]));
 
         var terminal = selectedElement.children[4];
         var terminalMatrix = getMatrix(terminal);
@@ -127,7 +127,7 @@ var scale = function (dx, dy) {
 
         // change loop and terminal
         var loop = selectedElement.children[3];
-        updateHalfCircle(selectedElement, loop, getX(circle), getY(circle), selectedElement.children[0].getAttribute('radius'));
+        updateHalfCircle(selectedElement, loop, getX(circle), getY(circle), getRadius(selectedElement.children[0]));
 
         var terminal = selectedElement.children[4];
         var terminalMatrix = getMatrix(terminal);
@@ -192,7 +192,7 @@ var scale = function (dx, dy) {
 
         // change loop and terminal
         var loop = selectedElement.children[3];
-        updateHalfCircle(selectedElement, loop, getX(circle), getY(circle), selectedElement.children[0].getAttribute('radius'));
+        updateHalfCircle(selectedElement, loop, getX(circle), getY(circle), getRadius(selectedElement.children[0]));
 
         var terminal = selectedElement.children[4];
         var terminalMatrix = getMatrix(terminal);
@@ -257,7 +257,7 @@ var scale = function (dx, dy) {
 
         // change loop and terminal
         var loop = selectedElement.children[3];
-        updateHalfCircle(selectedElement, loop, getX(circle), getY(circle), selectedElement.children[0].getAttribute('radius'));
+        updateHalfCircle(selectedElement, loop, getX(circle), getY(circle), getRadius(selectedElement.children[0]));
 
         var terminal = selectedElement.children[4];
         var terminalMatrix = getMatrix(terminal);
@@ -311,7 +311,7 @@ var scale = function (dx, dy) {
         updateXY(lineE, 0, dy / 2);
     }
 
-    radiusInfo.html(circle.getAttribute('radius'));
+    radiusInfo.html(getRadius(circle));
 };
 
 var scaleTo = function (targetRadius) {
@@ -398,7 +398,7 @@ var scaleTo = function (targetRadius) {
     updateXY(lineE, dr, 0);
 
     var loop = selectedElement.children[3];
-    updateHalfCircle(selectedElement, loop, getX(circle), getY(circle), selectedElement.children[0].getAttribute('radius'));
+    updateHalfCircle(selectedElement, loop, getX(circle), getY(circle), getRadius(selectedElement.children[0]));
 
     var terminal = selectedElement.children[4];
     var terminalMatrix = getMatrix(terminal);

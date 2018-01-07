@@ -42,7 +42,7 @@ var updateXY = function (x, dx, dy) {
 };
 
 var updateRadius = function (x, dx) {
-    var r = parseFloat(x.getAttribute("radius"));
+    var r = getRadius(x);
     x.setAttribute("radius", r + dx);
 };
 
