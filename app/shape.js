@@ -221,6 +221,9 @@ var drawHalfCircle = function (x, y, r) {
 
 var updateHalfCircle = function (node, loop, x, y, r) {
     var g = drawHalfCircle(x, y, r);
+    if(loop.getAttribute('visibility') == 'hidden'){
+        g.setAttribute('visibility', 'hidden');
+    }
     var terminal = node.children[4];
     node.removeChild(terminal);
     node.removeChild(loop);

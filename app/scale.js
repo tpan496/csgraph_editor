@@ -60,6 +60,21 @@ var scale = function (dx, dy) {
         circle.setAttribute('transform', newMatrix);
         updateRadius(circle, -dx / 2);
 
+        // change loop and terminal
+        var loop = selectedElement.children[3];
+        updateHalfCircle(selectedElement, loop, getX(circle), getY(circle), selectedElement.children[0].getAttribute('radius'));
+
+        var terminal = selectedElement.children[4];
+        var terminalMatrix = getMatrix(terminal);
+
+        terminalMatrix[0] = rate;
+        terminalMatrix[3] = rate;
+        terminalMatrix[4] = getAbsoluteX(circle) + dx / 2;
+        terminalMatrix[5] = getAbsoluteY(circle) + dy / 2;
+        newMatrix = matrixToString(terminalMatrix);
+        terminal.setAttribute('transform', newMatrix);
+        updateRadius(terminal, -dx / 2);
+
         var swMatrix = getMatrix(scalerSW);
         swMatrix[4] = getAbsoluteX(scalerSW) + dx;
         scalerSW.setAttribute('transform', matrixToString(swMatrix));
@@ -109,6 +124,21 @@ var scale = function (dx, dy) {
         newMatrix = matrixToString(circleMatrix);
         circle.setAttribute('transform', newMatrix);
         updateRadius(circle, dx / 2);
+
+        // change loop and terminal
+        var loop = selectedElement.children[3];
+        updateHalfCircle(selectedElement, loop, getX(circle), getY(circle), selectedElement.children[0].getAttribute('radius'));
+
+        var terminal = selectedElement.children[4];
+        var terminalMatrix = getMatrix(terminal);
+
+        terminalMatrix[0] = rate;
+        terminalMatrix[3] = rate;
+        terminalMatrix[4] = getAbsoluteX(circle) + dx / 2;
+        terminalMatrix[5] = getAbsoluteY(circle) + dy / 2;
+        newMatrix = matrixToString(terminalMatrix);
+        terminal.setAttribute('transform', newMatrix);
+        updateRadius(terminal, dx / 2);
 
         var nwMatrix = getMatrix(scalerNW);
         nwMatrix[5] = getAbsoluteY(scalerNW) + dy;
@@ -160,6 +190,21 @@ var scale = function (dx, dy) {
         circle.setAttribute('transform', newMatrix);
         updateRadius(circle, dx / 2);
 
+        // change loop and terminal
+        var loop = selectedElement.children[3];
+        updateHalfCircle(selectedElement, loop, getX(circle), getY(circle), selectedElement.children[0].getAttribute('radius'));
+
+        var terminal = selectedElement.children[4];
+        var terminalMatrix = getMatrix(terminal);
+
+        terminalMatrix[0] = rate;
+        terminalMatrix[3] = rate;
+        terminalMatrix[4] = getAbsoluteX(circle) + dx / 2;
+        terminalMatrix[5] = getAbsoluteY(circle) + dy / 2;
+        newMatrix = matrixToString(terminalMatrix);
+        terminal.setAttribute('transform', newMatrix);
+        updateRadius(terminal, dx / 2);
+
         var swMatrix = getMatrix(scalerSW);
         swMatrix[5] = getAbsoluteY(scalerSW) + dy;
         scalerSW.setAttribute('transform', matrixToString(swMatrix));
@@ -209,6 +254,21 @@ var scale = function (dx, dy) {
         newMatrix = matrixToString(circleMatrix);
         circle.setAttribute('transform', newMatrix);
         updateRadius(circle, -dx / 2);
+
+        // change loop and terminal
+        var loop = selectedElement.children[3];
+        updateHalfCircle(selectedElement, loop, getX(circle), getY(circle), selectedElement.children[0].getAttribute('radius'));
+
+        var terminal = selectedElement.children[4];
+        var terminalMatrix = getMatrix(terminal);
+
+        terminalMatrix[0] = rate;
+        terminalMatrix[3] = rate;
+        terminalMatrix[4] = getAbsoluteX(circle) + dx / 2;
+        terminalMatrix[5] = getAbsoluteY(circle) + dy / 2;
+        newMatrix = matrixToString(terminalMatrix);
+        terminal.setAttribute('transform', newMatrix);
+        updateRadius(terminal, -dx / 2);
 
         var nwMatrix = getMatrix(scalerNW);
         nwMatrix[4] = getAbsoluteX(scalerNW) + dx;

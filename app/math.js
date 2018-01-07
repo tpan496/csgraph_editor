@@ -46,6 +46,14 @@ var updateRadius = function (x, dx) {
     x.setAttribute("radius", r + dx);
 };
 
+var getX = function (x) {
+    return parseFloat(x.getAttribute("position-x"));
+};
+
+var getY = function (x) {
+    return parseFloat(x.getAttribute("position-y"));
+};
+
 var getAbsoluteX = function (x) {
     var currentX = getX(x);
     var originX = parseFloat(x.getAttribute("origin-x"));
@@ -53,17 +61,9 @@ var getAbsoluteX = function (x) {
 };
 
 var getAbsoluteY = function (x) {
-    var currentY = getY(y);
+    var currentY = getY(x);
     var originY = parseFloat(x.getAttribute("origin-y"));
     return currentY - originY;
-};
-
-var getX = function (x) {
-    return parseFloat(x.getAttribute("position-x"));
-};
-
-var getY = function (x) {
-    return parseFloat(x.getAttribute("position-y"));
 };
 
 var getRadius = function (x) {
