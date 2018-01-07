@@ -1,3 +1,9 @@
+/**
+ * Core script that deals with all the events triggered inside html.
+ * Include events for svg, buttons, key events, and input boxes.
+ */
+
+// variables
 var svgns = "http://www.w3.org/2000/svg"
 var selectedElement = 0;
 var selectedScaler = 0;
@@ -36,6 +42,10 @@ var clearButton;
 var selfLoopButton;
 var terminalButton;
 
+/**
+ * Called when document is loaded. Registers events triggered by
+ * clicking buttons/spawning objects.
+ */
 $(document).ready(function () {
     svg = $('svg')[0];
     radiusInfo = $('label#radius');
@@ -54,6 +64,7 @@ $(document).ready(function () {
     terminalButton = $('#terminal');
     displayBoard();
 
+    // Node button for spawning nodes
     $('#button-circle').click(function () {
         var rx = parseInt(randomRange(0, 20));
         var ry = parseInt(randomRange(0, 20));
@@ -70,6 +81,7 @@ $(document).ready(function () {
         displayInfo(node);
     });
 
+    // Label button for spawning lables
     $('#button-label').click(function () {
         var rx = parseInt(randomRange(0, 20));
         var ry = parseInt(randomRange(0, 20));
@@ -87,29 +99,35 @@ $(document).ready(function () {
         displayInfo(label);
     });
 
+    // Save PNG button for exporting to PNG
     $('#button-png').click(function () {
         exportPNG();
     });
 
+    // Save XML button for exporting to XML
     $('#button-xml').click(function () {
         saveXML();
     });
 
+    // Load XML button for loading XML
     $('#button-load').click(function () {
         loadXML();
     });
 
+    // Clear button for clearing the page
     $('#button-clear').click(function () {
         $('svg').html('');
         serialId = 0;
     });
 
+    // SVG click listener
     $('svg').click(function () {
         if (selectedElement != 0 && !mouseOverNode) {
             turnOffSelectedElementIndicators();
         }
     });
 
+    // Input box click/focusout event listener
     $('.clickedit').focusout(endInfoEdit).keyup(function (e) {
         if ((e.which && e.which == 13) || (e.keyCode && e.keyCode == 13)) {
             endInfoEdit(e);
@@ -126,23 +144,31 @@ $(document).ready(function () {
         currentEditTarget = $(this).next();
     });
 
+    // Enable grid button
     $('#grid').click(function () {
         toggleGrid($(this));
     });
 
+    // Enable directed button
     $('#directed').click(function () {
         toggleDirected($(this));
     });
 
+    // Enable self-loop button
     $('#self-loop').click(function () {
         toggleSelfLoop($(this), selectedElement);
     });
 
+    // Enable terminal button
     $('#terminal').click(function () {
         toggleTerminal($(this), selectedElement);
     });
 });
 
+/**
+ * Turns off the additional indicators for the previous
+ * selected element.
+ */
 var turnOffSelectedElementIndicators = function () {
     if (selectedElement != 0 && (isNode(selectedElement) || isEdge(selectedElement) || isLabel(selectedElement))) {
         var scaler = selectedElement.children[2];
@@ -183,6 +209,9 @@ var editLabel = function (evt) {
     }
 };
 
+/**
+ * Ends the editing phase for label
+ */
 var endLabelEdit = function () {
     if (isLabel(selectedElement)) {
         editing = false;
@@ -201,6 +230,10 @@ var endLabelEdit = function () {
     }
 };
 
+/**
+ * Updates the label after it is render
+ * @param {label} label 
+ */
 var updateLabel = function (label) {
     var bbox = label.children[0].getBBox();
     label.children[1].setAttribute('x', bbox.x);
@@ -219,6 +252,10 @@ var updateLabel = function (label) {
     label.children[2].children[0].value = label.children[0].textContent;
 };
 
+/**
+ * Called when the linker is selected. Draws a link pointer.
+ * @param {mouse event} e 
+ */
 var selectLinker = function (e) {
     e.preventDefault();
     if (e.target.getAttribute("class") != "linker") {
@@ -237,6 +274,11 @@ var selectLinker = function (e) {
     svg.setAttribute('onmouseup', 'deselectLinker(evt)');
 };
 
+/**
+ * Called after a linker has been selected and the user is dragging
+ * the pointer to some target.
+ * @param {mouse event} e 
+ */
 var moveLinker = function (e) {
     e.preventDefault();
     if (linkerMouseDown) {
@@ -251,6 +293,10 @@ var moveLinker = function (e) {
     currentY = e.clientY;
 };
 
+/**
+ * Called after the linker is deselcted.
+ * @param {mouse event} e 
+ */
 var deselectLinker = function (e) {
     e.preventDefault();
     linkerMouseDown = false;
@@ -291,6 +337,10 @@ var deselectLinker = function (e) {
     clearSVGEvents();
 };
 
+/**
+ * Called when an edge is selected.
+ * @param {mouse event} e 
+ */
 var selectEdge = function (e) {
     e.preventDefault();
     clearEdit();
@@ -303,6 +353,10 @@ var selectEdge = function (e) {
     displayInfo(selectedElement);
 };
 
+/**
+ * Called when a scaler node is selected.
+ * @param {mouse event} e 
+ */
 var selectScaler = function (e) {
     e.preventDefault();
     if (e.target.getAttribute("class") != "scale-node") {
@@ -322,6 +376,11 @@ var selectScaler = function (e) {
     svg.setAttribute('onmouseup', 'deselectElement(evt)');
 };
 
+/**
+ * Called after a scale node has been selected, and the user
+ * is dragging the scaler node.
+ * @param {mouse event} e 
+ */
 var moveScaler = function (e) {
     e.preventDefault();
     var dx = e.clientX - currentX;
@@ -331,8 +390,7 @@ var moveScaler = function (e) {
     // in case of circle
     var shiftDx = dx >= dy ? dx : (dx * dy >= 0 ? dy : -dy);
     var shiftDy = dx >= dy ? (dx * dy >= 0 ? dx : -dx) : dy;
-    //var shiftDx = dx;
-    //var shiftDy = dx * dy >= 0 ? dx : -dx;
+
     var radius = getRadius(selectedElement.children[0]);
     switch (scalerId) {
         case 'nw':
@@ -364,9 +422,15 @@ var moveScaler = function (e) {
     selectedScaler.setAttribute('transform', newMatrix);
     currentX = e.clientX;
     currentY = e.clientY;
+
+    // Scale the node according to mouse movement
     scale(shiftDx, shiftDy);
 };
 
+/**
+ * Called when a label has been selected.
+ * @param {mouse event} e 
+ */
 var selectLabel = function (e) {
     e.preventDefault();
     clearEdit();
@@ -389,7 +453,11 @@ var selectLabel = function (e) {
     svg.setAttribute("onmouseup", "deselectElement(evt)");
 };
 
-var selectElement = function (e) {
+/**
+ * Called when a graph node is selected.
+ * @param {mouse event} e 
+ */
+var selectNode = function (e) {
     e.preventDefault();
     clearEdit();
 
@@ -403,6 +471,7 @@ var selectElement = function (e) {
     displayInfo(selectedElement);
     selectedElement.children[1].setAttribute('fill', 'rgb(175,175,175)');
 
+    // Render scalers
     var scaler = selectedElement.children[2];
     if (scaler.getAttribute("visibility") === "hidden") {
         scaler.setAttribute("visibility", "visible");
@@ -415,6 +484,11 @@ var selectElement = function (e) {
     svg.setAttribute("onmouseup", "deselectElement(evt)");
 };
 
+/**
+ * Called after a node/label has been selected and the user is
+ * dragging the object.
+ * @param {mouse event} e 
+ */
 var moveElement = function (e) {
     e.preventDefault();
     var dx = e.clientX - currentX;
@@ -440,6 +514,10 @@ var moveElement = function (e) {
     currentY = e.clientY;
 };
 
+/**
+ * Called when the user released the mouse.
+ * @param {mouse event} evt 
+ */
 var deselectElement = function (evt) {
     evt.preventDefault();
     clearSVGEvents();
@@ -450,57 +528,28 @@ var deselectElement = function (evt) {
     }
 };
 
+/**
+ * Called when the mouse is over a object
+ * @param {mouse event} e 
+ */
 var hoverElement = function (e) {
     mouseOverNode = true;
     overNode = e.target;
 };
 
+/**
+ * Called when the mouse comes out of a object
+ * @param {mouse event} e 
+ */
 var outElement = function (e) {
     mouseOverNode = false;
     overNode = 0;
 };
 
-// deletion
-$('html').keyup(function (e) {
-    if (!editing) {
-        if (e.keyCode == 46 || e.keyCode == 8) {
-            if (selectedElement != 0) {
-                if (isNode(selectedElement)) {
-                    svg.removeChild(selectedElement);
-                    deleteVertex(selectedElement.getAttribute('id'));
-                } else if (isEdge(selectedElement)) {
-                    svg.removeChild(selectedElement.parentElement);
-                    deleteEdge(selectedElement.getAttribute('v1'), selectedElement.getAttribute('v2'));
-                } else if (isLabel(selectedElement)) {
-                    svg.removeChild(selectedElement);
-                }
-                displayBoard();
-                selectedElement = 0;
-            }
-        }
-    }
-    if (forceAlign) {
-        forceAlign = false;
-    }
-});
-
-// enter to complete edit
-$('html').keyup(function (e) {
-    if (e.keyCode == 13) {
-        if (isLabel(selectedElement) && editing) {
-            endLabelEdit();
-        }
-    }
-});
-
-// force align
-$('html').keydown(function (e) {
-    if (e.keyCode == 65) {
-        forceAlign = true;
-    }
-});
-
-// edit ends
+/**
+ * Called when user is editing the pressed enter or click somewhere else
+ * @param {mouse event} e 
+ */
 var endInfoEdit = function(e) {
     // change selected element shape according to text
     if (editing) {
@@ -589,6 +638,9 @@ var endInfoEdit = function(e) {
     editing = false;
 };
 
+/**
+ * Called for copy event
+ */
 var copySelectedElement = function () {
     if (selectedElement != 0) {
         if (isLabel(selectedElement) || isNode(selectedElement)) {
@@ -598,6 +650,9 @@ var copySelectedElement = function () {
     }
 };
 
+/**
+ * Called for paste event
+ */
 var pasteSelectedElement = function () {
     if (copiedElement != 0) {
         console.log('pasted');
@@ -649,12 +704,18 @@ var pasteSelectedElement = function () {
     }
 };
 
+/**
+ * Clear svg of mouse events
+ */
 var clearSVGEvents = function(){
     svg.removeAttribute("onmousemove");
     svg.removeAttribute("onmouseup");
     svg.removeAttribute("onmouseout");
 };
 
+/**
+ * Clear editing phase
+ */
 var clearEdit = function(){
     if (editing) {
         editing = false;
@@ -669,7 +730,47 @@ var clearEdit = function(){
     }
 };
 
-// copy paste
+// copy paste events
 $(document).bind('copy', function () { copySelectedElement(); });
 $(document).bind('paste', function () { pasteSelectedElement(); });
 $(document).bind('keydown.meta_s', function () { alert('save'); });
+
+// Called when delete key is pressed by user
+$('html').keyup(function (e) {
+    if (!editing) {
+        if (e.keyCode == 46 || e.keyCode == 8) {
+            if (selectedElement != 0) {
+                if (isNode(selectedElement)) {
+                    svg.removeChild(selectedElement);
+                    deleteVertex(selectedElement.getAttribute('id'));
+                } else if (isEdge(selectedElement)) {
+                    svg.removeChild(selectedElement.parentElement);
+                    deleteEdge(selectedElement.getAttribute('v1'), selectedElement.getAttribute('v2'));
+                } else if (isLabel(selectedElement)) {
+                    svg.removeChild(selectedElement);
+                }
+                displayBoard();
+                selectedElement = 0;
+            }
+        }
+    }
+    if (forceAlign) {
+        forceAlign = false;
+    }
+});
+
+// Called when enter key is pressed by user
+$('html').keyup(function (e) {
+    if (e.keyCode == 13) {
+        if (isLabel(selectedElement) && editing) {
+            endLabelEdit();
+        }
+    }
+});
+
+// force align
+$('html').keydown(function (e) {
+    if (e.keyCode == 65) {
+        forceAlign = true;
+    }
+});

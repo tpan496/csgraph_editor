@@ -26,7 +26,7 @@ var drawNode = function (x, y) {
     node.appendChild(loop);
     node.appendChild(terminal);
     node.setAttribute('transform', 'matrix(1 0 0 1 0 0)');
-    node.setAttribute('onmousedown', 'selectElement(evt)');
+    node.setAttribute('onmousedown', 'selectNode(evt)');
     node.setAttribute('class', 'node');
     node.setAttribute('onmouseover', 'hoverElement(evt)');
     node.setAttribute('onmouseout', 'outElement(evt)');
