@@ -1,4 +1,19 @@
+/**
+ * @author tpan496
+ * Script that deals with basic shape manipulations.
+ */
+
 var svgns = "http://www.w3.org/2000/svg"
+
+/**
+ * Draws a circle
+ * @param {x position} x 
+ * @param {y position} y 
+ * @param {radius} radius 
+ * @param {fill color} fill 
+ * @param {stroke color} stroke 
+ * @param {stroke width} strokeWidth 
+ */
 var drawCircle = function (x, y, radius, fill, stroke, strokeWidth) {
     var circle = document.createElementNS(svgns, 'circle');
     circle.setAttribute('cx', x);
@@ -18,6 +33,13 @@ var drawCircle = function (x, y, radius, fill, stroke, strokeWidth) {
     return circle;
 };
 
+/**
+ * Draws a rectangle at given position
+ * @param {x position} x 
+ * @param {y position} y 
+ * @param {width} w 
+ * @param {height} h 
+ */
 var drawRect = function (x, y, w, h) {
     var rect = document.createElementNS(svgns, 'rect');
     rect.setAttributeNS(null, 'x', x);
@@ -31,6 +53,15 @@ var drawRect = function (x, y, w, h) {
     return rect;
 };
 
+/**
+ * Draws a line from point 1 to point 2
+ * @param {x1 position} x1 
+ * @param {y1 position} y1 
+ * @param {x2 position} x2 
+ * @param {y2 position} y2 
+ * @param {width} w 
+ * @param {color} color 
+ */
 var drawLine = function (x1, y1, x2, y2, w, color) {
     var line = document.createElementNS(svgns, 'line');
     line.setAttribute('x1', x1);
@@ -48,7 +79,16 @@ var drawLine = function (x1, y1, x2, y2, w, color) {
     line.setAttribute('origin-y', (y1 + y2) / 2);
     return line;
 };
-
+/**
+ * Draws a dashed line from point 1 to point 2
+ * @param {x1 position} x1 
+ * @param {y1 position} y1 
+ * @param {x2 position} x2 
+ * @param {y2 position} y2 
+ * @param {dash array} array
+ * @param {width} w 
+ * @param {color} color 
+ */
 var drawDashedLine = function (x1, y1, x2, y2, array, w, color) {
     var line = document.createElementNS(svgns, 'line');
     line.setAttribute('x1', x1);
@@ -68,6 +108,12 @@ var drawDashedLine = function (x1, y1, x2, y2, array, w, color) {
     return line;
 };
 
+/**
+ * Draws a text at given position. Default text is 'text'
+ * @param {x position} x 
+ * @param {y position} y 
+ * @param {text} t 
+ */
 var drawText = function (x, y, t) {
     var text = document.createElementNS(svgns, 'text');
     text.setAttribute('x', x);
@@ -95,6 +141,10 @@ var drawText = function (x, y, t) {
     return text;
 };
 
+/**
+ * Draws an arrow head at one end of edge
+ * @param {given edge} edge 
+ */
 var drawArrowHead = function (edge) {
     var a = 15.0;
     var x1 = parseFloat(edge.getAttribute('x1'));
@@ -156,6 +206,13 @@ var drawArrowHead = function (edge) {
     return polygon;
 };
 
+/**
+ * Draws an input text box at given position
+ * @param {x position} x 
+ * @param {y position} y 
+ * @param {width} w 
+ * @param {height} h 
+ */
 var drawInputBox = function (x, y, w, h) {
     var foreign = document.createElementNS(svgns, 'foreignObject');
     foreign.setAttribute('x', x);
@@ -175,6 +232,12 @@ var drawInputBox = function (x, y, w, h) {
     return foreign;
 };
 
+/**
+ * Draws an incomplete circle(-135 deg to 135 deg)
+ * @param {x position} x 
+ * @param {y position} y 
+ * @param {radius} r 
+ */
 var drawHalfCircle = function (x, y, r) {
     var g = document.createElementNS(svgns, 'g');
     var path = document.createElementNS(svgns, 'path');
@@ -219,6 +282,14 @@ var drawHalfCircle = function (x, y, r) {
     return g;
 };
 
+/**
+ * Replace the old incomplete circle with a new one
+ * @param {node containing this circle} node 
+ * @param {old incomplete circle} loop 
+ * @param {new x position} x 
+ * @param {new y position} y 
+ * @param {new radius} r 
+ */
 var updateHalfCircle = function (node, loop, x, y, r) {
     var g = drawHalfCircle(x, y, r);
     if(loop.getAttribute('visibility') == 'hidden'){
@@ -231,6 +302,13 @@ var updateHalfCircle = function (node, loop, x, y, r) {
     node.appendChild(terminal);
 };
 
+/**
+ * Transforms to cartesian values
+ * @param {x position} centerX 
+ * @param {y position} centerY 
+ * @param {radius} radius 
+ * @param {angle} angleInDegrees 
+ */
 var polarToCartesian = function(centerX, centerY, radius, angleInDegrees) {
     var angleInRadians = (angleInDegrees - 90) * Math.PI / 180.0;
 
@@ -240,6 +318,14 @@ var polarToCartesian = function(centerX, centerY, radius, angleInDegrees) {
     };
 }
 
+/**
+ * Draws an arc
+ * @param {x position} x 
+ * @param {y position} y 
+ * @param {radius} radius 
+ * @param {start angle} startAngle 
+ * @param {end angle} endAngle 
+ */
 var describeArc = function(x, y, radius, startAngle, endAngle) {
 
     var start = polarToCartesian(x, y, radius, endAngle);

@@ -1,4 +1,5 @@
 /**
+ * @author tpan496
  * Core script that deals with all the events triggered inside html.
  * Include events for svg, buttons, key events, and input boxes.
  */

@@ -1,3 +1,13 @@
+/**
+ * @author tpan496
+ * Script that deals with objects(node, label, edge).
+ */
+
+/**
+ * Draws a graph node at given position
+ * @param {x position} x 
+ * @param {y position} y 
+ */
 var drawNode = function (x, y) {
     var node = document.createElementNS(svgns, 'g');
     var circle = drawCircle(x, y, 20, 'white', 'black', 1.5);
@@ -40,6 +50,12 @@ var drawNode = function (x, y) {
     return node;
 };
 
+/**
+ * Draws mutators(scaler and linker) at given position
+ * @param {x position} x 
+ * @param {y position} y 
+ * @param {radius} radius 
+ */
 var drawMutator = function (x, y, radius) {
     var mutator = document.createElementNS(svgns, 'g');
     var scaler = drawScaler(x, y, radius);
@@ -50,6 +66,11 @@ var drawMutator = function (x, y, radius) {
     return mutator;
 };
 
+/**
+ * Draws a linker at given position.
+ * @param {x position} x 
+ * @param {y position} y 
+ */
 var drawLinker = function (x, y) {
     var linker = drawCircle(x, y, 6, 'rgb(0,255,0)', 'black', 0.5);
     linker.setAttribute('class', 'linker');
@@ -58,6 +79,12 @@ var drawLinker = function (x, y) {
     return linker;
 };
 
+/**
+ * Draws 4 scaler nodes at given position
+ * @param {x position} x 
+ * @param {y position} y 
+ * @param {radius} radius 
+ */
 var drawScaler = function (x, y, radius) {
     var scaler = document.createElementNS(svgns, 'g');
     var scaleCircle1 = drawScalerNode(x + radius, y + radius, 'se');
@@ -84,6 +111,13 @@ var drawScaler = function (x, y, radius) {
     return scaler;
 };
 
+/**
+ * Draws a scaler node at given position. The id of
+ * scaler node represents its direction.
+ * @param {x position} x 
+ * @param {y position} y 
+ * @param {scaler node id} id 
+ */
 var drawScalerNode = function (x, y, id) {
     var scaleCircle = drawCircle(x, y, 5, 'rgb(0,122,255)', 'white', 0.5);
     scaleCircle.setAttribute('onmousedown', 'selectScaler(evt)');
@@ -93,6 +127,11 @@ var drawScalerNode = function (x, y, id) {
     return scaleCircle;
 };
 
+/**
+ * Draws a label at given position
+ * @param {x position} x 
+ * @param {y position} y 
+ */
 var drawLabel = function (x, y) {
     var label = document.createElementNS(svgns, 'g');
     var text = drawText(x, y, '');
@@ -120,6 +159,10 @@ var drawLabel = function (x, y) {
     return label;
 };
 
+/**
+ * Check if object is a Node
+ * @param {object} e 
+ */
 var isNode = function (e) {
     if (e.getAttribute('class') == 'node') {
         return true;
@@ -128,6 +171,10 @@ var isNode = function (e) {
     }
 };
 
+/**
+ * Check if object is an edge
+ * @param {object} e 
+ */
 var isEdge = function (e) {
     if (e.getAttribute('class') == 'edge') {
         return true;
@@ -136,6 +183,10 @@ var isEdge = function (e) {
     }
 };
 
+/**
+ * Check if object is a label
+ * @param {object} e 
+ */
 var isLabel = function (e) {
     if (e.getAttribute('class') == 'label'){
         return true;

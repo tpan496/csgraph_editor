@@ -1,3 +1,8 @@
+/**
+ * @author tpan496
+ * Script that deals with graph-related manipulations.
+ */
+
 var svg;
 var V = [];
 var E = [];
@@ -6,6 +11,10 @@ var E_out = [];
 var vacantPositions = [];
 var E_shape = [];
 
+/**
+ * Returns a reusable serial id. If there is no reusable one,
+ * return -1.
+ */
 var getReusableId = function () {
     if (vacantPositions.length > 0) {
         return vacantPositions.pop();
@@ -14,6 +23,11 @@ var getReusableId = function () {
     }
 };
 
+/**
+ * Adds a new graph node(vertex)
+ * @param {serial id} v 
+ * @param {node object} node 
+ */
 var addVertex = function (v, node) {
     while (V.length <= v) {
         V.push(-1);
@@ -25,6 +39,12 @@ var addVertex = function (v, node) {
     V[v] = node;
 };
 
+/**
+ * Adds a new edge
+ * @param {out vertex} u 
+ * @param {in vertex} v 
+ * @param {edge object} line 
+ */
 var addEdge = function (u, v, line) {
     E[u].push(v);
     E[v].push(u);
@@ -37,10 +57,18 @@ var addEdge = function (u, v, line) {
     console.log(E_out);
 };
 
+/**
+ * Returns all the edges of a vertex
+ * @param {vertex} v 
+ */
 var getEdges = function (v) {
     return E_shape[v];
 };
 
+/**
+ * Removes a vertex from graph
+ * @param {vertex} v 
+ */
 var deleteVertex = function (v) {
     V[v] = -1;
     var degV = E[v].length;
@@ -80,6 +108,11 @@ var deleteVertex = function (v) {
     vacantPositions.push(v);
 };
 
+/**
+ * Deletes an edge from the graph
+ * @param {out vertex} u 
+ * @param {in vertex} v 
+ */
 var deleteEdge = function (u, v) {
     console.log(E_out);
     var degU = E[u].length;
@@ -119,6 +152,9 @@ var deleteEdge = function (u, v) {
     console.log(E_out);
 };
 
+/**
+ * Generates a new graph from loaded xml file
+ */
 var generateGraphFromXml = function () {
     E = [];
     E_out = [];

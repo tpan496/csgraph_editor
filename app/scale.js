@@ -1,4 +1,5 @@
 /**
+ * @author tpan496
  * Contains two scripts that deal with object
  * scaling.
  */

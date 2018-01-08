@@ -1,8 +1,17 @@
+/**
+ * @author tpan496
+ * Script that deals with the information panel on the right.
+ */
+
 var paperString = "1. This editor is best suited for creating mathematical graphs.<br/> 2. Supports ctrl-c/ctrl-v operations on node and labels. <br/>3. Save your graph either as PNG or XML file for future edits."
 var nodeString = "Node object represents a vertex in the graph. Drag from the green center from the node to form an edge with another one.";
 var edgeString = "Edge object represents an edge in the graph. You can toggle on/off its arrrow from 'enable directed'.";
 var labelString = "Label object allows you to create text on the paper. Note that it cannot be connected via any means.";
 
+/**
+ * Displays info of the selected object
+ * @param {selected object} node 
+ */
 var displayInfo = function (node) {
     clearBoard();
     $('.clickedit').hide();
@@ -61,6 +70,10 @@ var displayInfo = function (node) {
     }
 };
 
+/**
+ * Displays x,y information of object
+ * @param {object} node 
+ */
 var displayXY = function(node) {
     if (isNode(node)) {
         xInfo.html(node.getAttribute('position-x'));
@@ -76,6 +89,10 @@ var displayXY = function(node) {
         yInfo.parent().show();
     }
 };
+
+/**
+ * Displays information of board
+ */
 var displayBoard = function () {
     elementInfo.html('paper');
     clearBoard();
@@ -84,6 +101,9 @@ var displayBoard = function () {
     guideInfo.html(paperString);
 };
 
+/**
+ * Clears display information
+ */
 var clearBoard = function () {
     radiusInfo.parent().hide();
     idInfo.parent().hide();

@@ -1,4 +1,5 @@
 /**
+ * @author tpan496
  * Script that covers mathematical operations.
  */
 

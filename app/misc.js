@@ -1,4 +1,5 @@
 /**
+ * @author tpan496
  * Script that deals with button events in the right-hand-side
  * info panels and a few button events on the left(export, load).
  */
