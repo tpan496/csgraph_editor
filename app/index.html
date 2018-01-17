@@ -1,11 +1,12 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>CS Graph Editor</title>
     <meta name="google-site-verification" content="o1Si-Q8kq-vZv-50s7gTTDatu88uGd3vVAXzM2u4tss" />
-    <meta name="description" content="Draw mathemtical/computer science graphs with simple tools."/>
+    <meta name="description" content="Draw mathemtical/computer science graphs with simple tools." />
     <link rel="stylesheet" type="text/css" media="screen" href="css/index.css" />
     <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
     <script src="lib/saveSvgAsPng.js"></script>
@@ -21,8 +22,8 @@
     <link rel="shortcut icon" type="image/x-icon" href="resources/favicon.ico" />
     <script type="application/ld+json">
         {
-          "@context": "http://csgraph.io",
-          "@type": "Editor",
+          "@context": "http://schema.org",
+          "@type": "SoftwareApplication",
           "url": "http://csgraph.io",
           "name": "CS Graph Diagram Editor",
           "author": {
@@ -30,11 +31,13 @@
               "name": "tpan496"
           },
           "description": "Draw mathemtical/computer science graph diagrmas with simple tools.",
-          "graph": ["directed", "undirected", "dfa", "automata"],
-          "math": ["graph theory", "computer science", "nodes"]
+          "applicationCategory": "Editor",
+          "operatingSystem": "web",
+          "genre": "math"
         }
-        </script>
+    </script>
 </head>
+
 <body>
     <div id="tool">
         <button id="button-circle">Node</button>
@@ -43,12 +46,14 @@
         <button id="button-xml">Save XML</button>
         <button id="button-load">Load XML</button>
         <button id="button-clear">Clear</button>
-        <a href="https://github.com/tpan496/csgraph_editor"
-        id="git" target="_blank">Github</a>
+        <a href="https://github.com/tpan496/csgraph_editor" id="git" target="_blank">Github</a>
     </div>
-    
-    <div id="paper"><div id="content"></div><svg id="box" onload="console.log('loaded');"></svg></div>
-    
+
+    <div id="paper">
+        <div id="content"></div>
+        <svg id="box" onload="console.log('loaded');"></svg>
+    </div>
+
     <div id="info">
         <div class="info" id="element" style="text-align: center">none</div>
         <div class="info-node-buttons">
@@ -57,18 +62,34 @@
         </div>
         <div class="info-button" id="grid">enable grid</div>
         <div class="info-button" id="directed">enable directed</div>
-        <div class="info">id: <label id="id">?</div>
-        <div class="info">x: <label id="x"></label><input class="clickedit" type="text" /></div>
-        <div class="info">y: <label id="y"></label><input class="clickedit" type="text" /></div>
-        <div class="info">radius: 
-            <label id="radius"></label>
-            <input class="clickedit" type="text" /> 
+        <div class="info">id:
+            <label id="id">?</div>
+        <div class="info">x:
+            <label id="x"></label>
+            <input class="clickedit" type="text" />
         </div>
-        <div class="info">text: <label id="text"></label><input class="clickedit" type="text" /> </div>
-        <div class="info">text-size: <label id="text-size"></label><input class="clickedit" type="text" /> </div>
-        <div class="info">from: <label id="from"></label></div>
-        <div class="info">to: <label id="to"></label></div>
+        <div class="info">y:
+            <label id="y"></label>
+            <input class="clickedit" type="text" />
+        </div>
+        <div class="info">radius:
+            <label id="radius"></label>
+            <input class="clickedit" type="text" />
+        </div>
+        <div class="info">text:
+            <label id="text"></label>
+            <input class="clickedit" type="text" /> </div>
+        <div class="info">text-size:
+            <label id="text-size"></label>
+            <input class="clickedit" type="text" /> </div>
+        <div class="info">from:
+            <label id="from"></label>
+        </div>
+        <div class="info">to:
+            <label id="to"></label>
+        </div>
         <div id="guide"></div>
     </div>
 </body>
+
 </html>
