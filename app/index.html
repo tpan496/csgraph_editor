@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>CS Graph Editor</title>
     <meta name="google-site-verification" content="o1Si-Q8kq-vZv-50s7gTTDatu88uGd3vVAXzM2u4tss" />
-    <meta name="description" content="Create mathemtical/computer science graphs with simple tools."/>
+    <meta name="description" content="Draw mathemtical/computer science graphs with simple tools."/>
     <link rel="stylesheet" type="text/css" media="screen" href="css/index.css" />
     <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
     <script src="lib/saveSvgAsPng.js"></script>
@@ -19,6 +19,21 @@
     <script src="scale.js"></script>
     <script src="misc.js"></script>
     <link rel="shortcut icon" type="image/x-icon" href="resources/favicon.ico" />
+    <script type="application/ld+json">
+        {
+          "@context": "http://csgraph.io",
+          "@type": "Editor",
+          "url": "http://csgraph.io",
+          "name": "CS Graph Diagram Editor",
+          "author": {
+              "@type": "Person",
+              "name": "tpan496"
+          },
+          "description": "Draw mathemtical/computer science graph diagrmas with simple tools.",
+          "graph": ["directed", "undirected", "dfa", "automata"],
+          "math": ["graph theory", "computer science", "nodes"]
+        }
+        </script>
 </head>
 <body>
     <div id="tool">
