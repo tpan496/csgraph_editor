@@ -4,6 +4,7 @@ Javascript web app for creating mathematical/computer science graph diagrams. Su
 <br />The app is inside 'app' folder, the rest being backend related files.
 <br />External libraries: jQuery, [jQueryHotKeys](https://github.com/jeresig/jquery.hotkeys), [saveSvgAsPng](https://github.com/exupero/saveSvgAsPng)
 <br />Site: [csgraph.io](https://csgraph.io)
+![alt text](screenshot.png)
 
 ## Use
 
