@@ -373,7 +373,7 @@ var selectScaler = function (e) {
         currentMatrix[i] = par;
     }
     clearSVGEvents();
-    svg.setAttribute('onmousemove', 'moveScaler(evt)');
+    //svg.setAttribute('onmousemove', 'moveScaler(evt)');
     svg.setAttribute('onmouseup', 'deselectElement(evt)');
 };
 
