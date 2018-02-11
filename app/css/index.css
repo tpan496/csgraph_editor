@@ -277,3 +277,18 @@ button:focus{
     margin-top: 5px;
     width: 80px;
 }
+
+#notice{
+    color: black; 
+    text-align:center; 
+    display:block;
+    padding:10px; 
+    position:absolute;
+    background: rgb(255, 255, 255);
+    font-family: 'Helvetica';
+    border-radius: 5px;
+    position: absolute;
+    bottom: 50px;
+    margin-top: 5px;
+    width: 80px;
+}
