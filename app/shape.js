@@ -22,7 +22,7 @@ var drawCircle = function (x, y, radius, fill, stroke, strokeWidth) {
     circle.setAttribute('fill', fill);
     circle.setAttribute('stroke', stroke);
     circle.setAttribute('stroke-width', strokeWidth);
-    circle.setAttribute('transform-origin', 'center');
+    circle.setAttribute('transform-origin', x+'px'+' '+y+'px');
     circle.setAttribute('transform', 'matrix(1 0 0 1 0 0)');
     circle.setAttribute('vector-effect', 'non-scaling-stroke');
     circle.setAttribute('position-x', x);
@@ -70,13 +70,14 @@ var drawLine = function (x1, y1, x2, y2, w, color) {
     line.setAttribute('y2', y2);
     line.setAttribute('stroke', color);
     line.setAttribute('stroke-width', w);
-    line.setAttribute('transform-origin', 'center');
+    line.setAttribute('transform-origin', x+'px'+' '+y+'px');
     line.setAttribute('transform', 'matrix(1 0 0 1 0 0)');
+    var xm = (x1+x2)/2, ym = (y1+y2)/2;
     line.setAttribute('vector-effect', 'non-scaling-stroke');
-    line.setAttribute('position-x', (x1 + x2) / 2);
-    line.setAttribute('position-y', (y1 + y2) / 2);
-    line.setAttribute('origin-x', (x1 + x2) / 2);
-    line.setAttribute('origin-y', (y1 + y2) / 2);
+    line.setAttribute('position-x', xm);
+    line.setAttribute('position-y', ym);
+    line.setAttribute('origin-x', xm);
+    line.setAttribute('origin-y', ym);
     return line;
 };
 /**
@@ -99,12 +100,13 @@ var drawDashedLine = function (x1, y1, x2, y2, array, w, color) {
     line.setAttribute('stroke-width', w);
     line.setAttribute('stroke-dasharray', array);
     line.setAttribute('transform', 'matrix(1 0 0 1 0 0)');
+    var xm = (x1+x2)/2, ym = (y1+y2)/2;
     line.setAttribute('vector-effect', 'non-scaling-stroke');
-    line.setAttribute('transform-origin', 'center');
-    line.setAttribute('position-x', (x1 + x2) / 2);
-    line.setAttribute('position-y', (y1 + y2) / 2);
-    line.setAttribute('origin-x', (x1 + x2) / 2);
-    line.setAttribute('origin-y', (y1 + y2) / 2);
+    line.setAttribute('transform-origin', xm+'px'+' '+ym+'px');
+    line.setAttribute('position-x', xm);
+    line.setAttribute('position-y', ym);
+    line.setAttribute('origin-x', xm);
+    line.setAttribute('origin-y', ym);
     return line;
 };
 
@@ -118,7 +120,7 @@ var drawText = function (x, y, t) {
     var text = document.createElementNS(svgns, 'text');
     text.setAttribute('x', x);
     text.setAttribute('y', y);
-    text.setAttribute('transform-origin', 'center');
+    text.setAttribute('transform-origin', x+'px'+' '+y+'px');
     text.setAttribute('text-anchor', 'middle');
     text.setAttribute('font-family', 'Arial');
     text.setAttribute('transform', 'matrix(1 0 0 1 0 0)');
@@ -200,7 +202,7 @@ var drawArrowHead = function (edge) {
     }
 
     polygon.setAttribute('class', 'arrow-head');
-    polygon.setAttribute('transform-origin', 'center');
+    polygon.setAttribute('transform-origin', x+'px'+' '+y+'px');
     polygon.setAttribute('fill', 'black');
 
     return polygon;
@@ -274,7 +276,7 @@ var drawHalfCircle = function (x, y, r) {
     }
 
     polygon.setAttribute('class', 'arrow-head');
-    polygon.setAttribute('transform-origin', 'center');
+    polygon.setAttribute('transform-origin', x+'px'+' '+y+'px');
     polygon.setAttribute('fill', 'black');
 
     g.appendChild(path);

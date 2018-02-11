@@ -354,7 +354,7 @@ var scaleTo = function (targetRadius) {
 
     var dr = parseFloat(targetRadius) - getRadius(circle);
     var rate = parseFloat(targetRadius) / getBaseRadius(circle);
-
+    
     circleMatrix[0] = rate;
     circleMatrix[3] = rate;
     newMatrix = matrixToString(circleMatrix);

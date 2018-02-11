@@ -263,6 +263,12 @@ button:focus{
     cursor: move;
 }
 
+svg .circle{
+    transform-origin: 50% 50%;
+    -moz-transform-origin: 50% 50%;
+    -webkit-transform-origin: 50% 50%;
+}
+
 #git{
     color: white; 
     text-align:center; 
