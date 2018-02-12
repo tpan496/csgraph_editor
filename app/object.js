@@ -19,14 +19,16 @@ var drawNode = function (x, y) {
 
     var text;
     var recycledId = getReusableId();
+    var isFF = typeof InstallTrigger !== 'undefined';
+    var yShifted = isFF ? y+5 : y;
     if (recycledId >= 0) {
         node.setAttribute('id', recycledId);
         addVertex(recycledId, node);
-        text = drawText(x, y, recycledId);
+        text = drawText(x, yShifted, recycledId);
     } else {
         node.setAttribute('id', serialId);
         addVertex(serialId, node);
-        text = drawText(x, y, serialId);
+        text = drawText(x, yShifted, serialId);
         serialId += 1;
     }
 
