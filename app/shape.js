@@ -22,8 +22,13 @@ var drawCircle = function (x, y, radius, fill, stroke, strokeWidth) {
     circle.setAttribute('fill', fill);
     circle.setAttribute('stroke', stroke);
     circle.setAttribute('stroke-width', strokeWidth);
-    circle.setAttribute('transform-origin', x+'px'+' '+y+'px');
+    var tOrigin = x+'px'+' '+y+'px';
+    circle.setAttribute('transform-origin', tOrigin);
     circle.setAttribute('transform', 'matrix(1 0 0 1 0 0)');
+    circle.style.MozTransformOrigin = tOrigin;
+    circle.style.webkitTransformOrigin = tOrigin;
+    circle.style.transformOrigin = tOrigin;
+    circle.style.msTransformOrigin = tOrigin;
     circle.setAttribute('vector-effect', 'non-scaling-stroke');
     circle.setAttribute('position-x', x);
     circle.setAttribute('position-y', y);
@@ -70,10 +75,15 @@ var drawLine = function (x1, y1, x2, y2, w, color) {
     line.setAttribute('y2', y2);
     line.setAttribute('stroke', color);
     line.setAttribute('stroke-width', w);
-    line.setAttribute('transform-origin', x+'px'+' '+y+'px');
     line.setAttribute('transform', 'matrix(1 0 0 1 0 0)');
     var xm = (x1+x2)/2, ym = (y1+y2)/2;
+    var tOrigin = xm+'px'+' '+ym+'px';
     line.setAttribute('vector-effect', 'non-scaling-stroke');
+    line.setAttribute('transform-origin', tOrigin);
+    line.style.MozTransformOrigin = tOrigin;
+    line.style.webkitTransformOrigin = tOrigin;
+    line.style.transformOrigin = tOrigin;
+    line.style.msTransformOrigin = tOrigin;
     line.setAttribute('position-x', xm);
     line.setAttribute('position-y', ym);
     line.setAttribute('origin-x', xm);
@@ -101,8 +111,13 @@ var drawDashedLine = function (x1, y1, x2, y2, array, w, color) {
     line.setAttribute('stroke-dasharray', array);
     line.setAttribute('transform', 'matrix(1 0 0 1 0 0)');
     var xm = (x1+x2)/2, ym = (y1+y2)/2;
+    var tOrigin = xm+'px'+' '+ym+'px';
     line.setAttribute('vector-effect', 'non-scaling-stroke');
-    line.setAttribute('transform-origin', xm+'px'+' '+ym+'px');
+    line.setAttribute('transform-origin', tOrigin);
+    line.style.MozTransformOrigin = tOrigin;
+    line.style.webkitTransformOrigin = tOrigin;
+    line.style.transformOrigin = tOrigin;
+    line.style.msTransformOrigin = tOrigin;
     line.setAttribute('position-x', xm);
     line.setAttribute('position-y', ym);
     line.setAttribute('origin-x', xm);
@@ -120,7 +135,12 @@ var drawText = function (x, y, t) {
     var text = document.createElementNS(svgns, 'text');
     text.setAttribute('x', x);
     text.setAttribute('y', y);
-    text.setAttribute('transform-origin', x+'px'+' '+y+'px');
+    var tOrigin = x+'px'+' '+y+'px';
+    text.setAttribute('transform-origin', tOrigin);
+    text.style.MozTransformOrigin = tOrigin;
+    text.style.webkitTransformOrigin = tOrigin;
+    text.style.transformOrigin = tOrigin;
+    text.style.msTransformOrigin = tOrigin;
     text.setAttribute('text-anchor', 'middle');
     text.setAttribute('font-family', 'Arial');
     text.setAttribute('transform', 'matrix(1 0 0 1 0 0)');
@@ -202,7 +222,12 @@ var drawArrowHead = function (edge) {
     }
 
     polygon.setAttribute('class', 'arrow-head');
-    polygon.setAttribute('transform-origin', x+'px'+' '+y+'px');
+    var tOrigin = x+'px'+' '+y+'px';
+    polygon.setAttribute('transform-origin', tOrigin);
+    polygon.style.MozTransformOrigin = tOrigin;
+    polygon.style.webkitTransformOrigin = tOrigin;
+    polygon.style.transformOrigin = tOrigin;
+    polygon.style.msTransformOrigin = tOrigin;
     polygon.setAttribute('fill', 'black');
 
     return polygon;
@@ -276,7 +301,12 @@ var drawHalfCircle = function (x, y, r) {
     }
 
     polygon.setAttribute('class', 'arrow-head');
-    polygon.setAttribute('transform-origin', x+'px'+' '+y+'px');
+    var tOrigin = x+'px'+' '+y+'px';
+    polygon.setAttribute('transform-origin', tOrigin);
+    polygon.style.MozTransformOrigin = tOrigin;
+    polygon.style.webkitTransformOrigin = tOrigin;
+    polygon.style.transformOrigin = tOrigin;
+    polygon.style.msTransformOrigin = tOrigin;
     polygon.setAttribute('fill', 'black');
 
     g.appendChild(path);
