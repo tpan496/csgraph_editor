@@ -11,4 +11,4 @@ Javascript web app for creating mathematical/computer science graph diagrams. Su
 Create nodes(vertices)/labels from left-side tool bar. Connect nodes by draggin the centered green button inside the node to targeted node. Once nodes are connected you can move them freely around as the edges would follow their connected vertices. You can also change the detailed paratemers of objects from the right-hand-side information panel.
 
 ## Note
-Due to transform-origin different implementations in browsers, scaling is currently only supported in Chrome.
+Due to transform-origin different implementations in browsers, scaling is not yet supported in Safari. It should work with latest version of Chrome/FireFox/Edge
